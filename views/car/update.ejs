@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Car</title>
+    <%- include('../components/headers.ejs') %> 
+      <!-- SweetAlert2 -->
+      <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+      <!-- Toastr -->
+      <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+</head>
+<body>
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+        <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item"><a href="/cars">Biler</a></li>
+                    <li class="breadcrumb-item"><a href="/cars"><%= car.boardNumber %></a></li>
+                    <li class="breadcrumb-item active">Oppdater</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Oppdater bil
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="container-fluid">
+                                    <div id="infoBox" class="alert" role="alert" style="display: none;"></div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-9">
+                                            <form id="updateCarForm">
+                                                <div class="input-group form-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                      <span class="input-group-text"><i class="fa fa-car"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" placeholder="Styrenummer" name="boardNumber" id="boardNumber" value="<%= car.boardNumber %>">
+                                                  </div>
+
+
+                                                  <div class="input-group form-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                      <span class="input-group-text"><i class="fa fa-key"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" placeholder="Privat nummer" name="privateNumber" id="privateNumber" value="<%= car.privateNumber %>">
+                                                  </div>
+
+                                                  <div class="input-group form-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                      <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                                    </div>
+                                                    <input type="number" class="form-control" placeholder="kilometer" name="kilometers" id="kilometers" value="<%= car.kilometers %>">
+                                                  </div>
+
+                                                  <div class="btn-group d-flex justify-content-center align-items-center">
+                                                    <button type="button" onclick="updateCar()" class="btn btn-info">Oppdater</button>
+                                                    <a href="/cars" class="btn btn-secondary" >Avbryt</a>
+                                                </div>
+                                                
+                                                
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>                    
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+
+    <%- include('../components/scripts.ejs') %>
+    <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+
+<script>
+
+var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        $('#updateCarForm').validate({
+    rules: {
+      boardNumber: {
+        required: true,
+      },
+      privateNumber: {
+        required: true,
+      },
+      kilometers: {
+        required: true
+      },
+    },
+    messages: {
+      boardNumber: {
+        required: "enter a board number",
+      },
+      privateNumber: {
+        required: "enter a private number",
+      },
+      kilometers: "enter kilometers",
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+
+    async function updateCar() {
+        if($('#updateCarForm').valid()){
+            const boardNumber = document.getElementById('boardNumber').value;
+            const privateNumber = document.getElementById('privateNumber').value;
+            const kilometers = document.getElementById('kilometers').value;
+
+        const formData = {
+            boardNumber: boardNumber,
+            privateNumber: privateNumber,
+            kilometers: kilometers
+        };
+            const carId = '<%= car._id %>';
+
+            let response = await fetch(`/admin/api/cars/${carId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+
+            if (response.status == 200) {
+            // Car created successfully, show success message and navigate back after 3 seconds
+            Toast.fire({
+                    icon: 'success',
+                    title: 'Car was updated successfully'
+                })
+            setTimeout(() => {
+                window.location.href = '/cars'; // Redirect to the car list page
+            }, 3000);
+        } else {
+            Toast.fire({
+                    icon: 'error',
+                    title: (await response.json()).toString()
+                })
+        }
+        } 
+    }
+</script>
+</body>
+</html>

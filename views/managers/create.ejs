@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Opprett leder</title>
+        <%- include('../components/headers') %>
+          <!-- Select2 -->
+        <link rel="stylesheet" href="/plugins/select2/css/select2.min.css">
+        <link rel="stylesheet" href="/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+
+        <style>
+            .wrap-options{
+            display: flex;
+            flex-wrap: wrap;
+            }
+
+            .wrap-options > div{
+            margin-right: 10px;
+            margin-bottom: 10px;
+            background-color: grey;
+            color: white;
+            font-weight: bolder;
+            border-radius: 12px;
+            user-select: none;
+            padding: 4px 20px;
+            transition: 0.8 ease-in;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrapper">
+            <%- include('../components/navbar') %>
+            <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %> 
+            <div class="content-wrapper">
+              <div class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                    <div class="col-sm-12">
+                        <ol class="breadcrumb float-sm-left">
+                        <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                        <li class="breadcrumb-item active"><a href="/managers">Ledere</a></li>
+                        <li class="breadcrumb-item active">Opprett</li>
+                        </ol>
+                    </div><!-- /.col -->
+                    </div><!-- /.row -->
+    
+                </div><!-- /.container-fluid -->
+                </div>
+
+                <div class="content">
+                    <form class="container-fluid mt-5" id="createStaffForm">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Brukernavn" id="username">
+                          </div>
+
+                          <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fas fa-text-height"></i></span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Navn" id="name">
+                          </div>
+
+                          <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Passord" id="password">
+                          </div>
+
+                          <div class="form-group">
+                            <select class="custom-select" id="role">
+                              <option value="manager">Teamleder</option>
+                              <option value="technician">Teknikker</option>
+                            </select>
+                          </div>
+
+                          <div class="d-flex justify-content-between align-items-start" id="manager-permissions">
+                            <div class="form-group flex-grow-1 mr-2">
+                                <select class="custom-select" id="method">
+                                  <option value="GET">Lese</option>
+                                  <option value="POST">Legge til</option>
+                                  <option value="DELETE">Slett</option>
+                                  <option value="PUT">Oppdater</option>
+                                </select>
+                              </div>
+
+                              <div class="form-group flex-grow-1 mr-2">
+                                <select class="custom-select" id="route">
+                                  <option value="reports/dashboard">Dashboard</option>
+                                  <option value="sms">SMS</option>
+                                  <option value="issues">Issues</option>
+                                  <option value="users">Brukere</option>
+                                  <option value="cars">Biler</option>
+                                  <option value="maps">Kart</option>
+                                  <option value="locations">Ruter</option>
+                                  <option value="zones">Soner</option>
+                                  <option value="machines">Maskiner</option>
+                                  <option value="imeis">Imeis</option>
+                                  <option value="postals">Send per post</option>
+                                  <option value="scans">Makulering</option>
+                                  <option value="notifications">Varsler</option>
+                                  <option value="settings">Innstillinger</option>
+                                  <option value="archieve">Arkiv</option>
+                                  <option value="reports">Rapporter</option>
+                                  <option value="issues/notifications">Utsted varsler</option>
+                                  <option value="pdfs">PDFS</option>
+                                  <option value="fields">Enger</option>
+                                </select>
+                              </div>
+
+                              <div class="btn btn-info" onclick="addPermission()">Legge til</div>
+
+
+                          </div>
+
+                          <div class="wrap-options" id="permissions">
+                                  
+                          </div>
+
+                          <div class="btn-group d-flex">
+                            <button type="button" class="btn btn-info btn-sm" onclick="createManager()">Legge til</button>
+                            <a href="/managers" class="btn btn-secondary btn-sm">Avbryt</a>
+                          </div>
+                    </form>
+                </div>
+            </div>
+            <%- include('../components/footer') %>
+        </div>
+    </body>
+
+    <%- include('../components/scripts') %>
+    <script>
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        let role_dropdown = document.getElementById('role')
+        role_dropdown.addEventListener('change', function(event){
+          let manager_permissions = document.getElementById('manager-permissions')
+          console.log(event.target.value);
+          if(event.target.value == 'technician'){
+            manager_permissions.className = 'd-none';
+          }else{
+            manager_permissions.className="d-flex justify-content-between align-items-start";
+          }
+        })
+        let permissions = []
+        let method = document.getElementById('method')
+        let route = document.getElementById('route')
+
+        let permissionsHolder = document.getElementById('permissions')
+
+        function addPermission(){
+            if(permissions.some(p => p.route == route.value && p.method == method.value)){
+                return;
+            }
+
+            permissions.push({
+                route: route.value,
+                method: method.value,
+            })
+
+            let div = document.createElement('div')
+            div.textContent = `${method.value} - ${route.value}`
+            permissionsHolder.appendChild(div)
+        }
+
+        async function createManager(){
+            try{
+                let username = document.getElementById('username')
+                let name = document.getElementById('name')
+                let password = document.getElementById('password')
+                let role_dropdown = document.getElementById('role')
+
+                let respones = await fetch('/admin/api/managers',{
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json; charset=utf-8',
+                    },
+                    body: JSON.stringify({
+                        username: username.value,
+                        name: name.value,
+                        password: password.value,
+                        role: role_dropdown.value,
+                        permissions: permissions
+                    })
+                })
+
+                if(respones.status === 200) {
+                    Toast.fire({
+                      icon: 'success',
+                      title: 'Manager opprettet'
+                    })
+
+                    setTimeout(() =>{
+                      location.href = '/managers'
+                    },3000)
+                }else{
+                  Toast.fire({
+                      icon: 'error',
+                      title: await respones.json()
+                    })
+                }
+            }catch(e){
+              Toast.fire({
+                      icon: 'error',
+                      title: e.message
+                    })
+            }
+        }
+    </script>
+</html>

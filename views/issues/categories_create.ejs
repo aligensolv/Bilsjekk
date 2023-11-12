@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desgine P-Automat</title>
+    <!-- Add Bootstrap CSS link -->
+    <%- include('../components/headers.ejs') %>
+      <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+        <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item"><a href="/issues/categories">P-Automat kategori</a></li>
+                    <li class="breadcrumb-item active">Opprett</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Opprett kategori
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="container-fluid">
+                                    <div id="infoBox" class="alert" role="alert" style="display: none;"></div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-9">
+                                            <form class="container-fluid" id="createMachineForm">
+                                                <div class="input-group form-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                      <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" placeholder="name" name="name" id="name">
+                                                  </div>
+                     
+                     
+                                                  <div class="form-group">
+                                                    <label>Importance</label>
+                                                    <select class="custom-select" id="importanceLevel" name="importanceLevel">
+                                                        <option value="1">Høy</option>
+                                                        <option value="2">Medium</option>
+                                                        <option value="3">Lav</option>
+                                                    </select>
+                                                  </div>
+
+                                
+
+                                                  <div class="d-flex align-items-center">
+                                                    <div class="input-group form-group mr-2">
+                                                        <div class="input-group-prepend">
+                                                          <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                                        </div>
+                                                        <input type="text" class="form-control" placeholder="Problem" name="problem" id="problem">
+                                                      </div>
+                                                      
+                                                      <div class="btn btn-info fa fa-plus align-self-start" onclick="addProblem()">
+                                                      </div>
+                                                  </div>
+
+                                                  <div id="problems-container" class="d-flex">
+
+                                                  </div>
+                                        
+                                        
+                                                <div class="d-flex justify-content-center align-items-center btn-group">
+                                                    <button type="button" id="createButton" class="btn btn-info me-3" onclick="createCategory()">Lage</button>
+                                                    <a href="/machines" class="btn btn-secondary">Avbryt</a>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>                    
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+    <%- include('../components/scripts.ejs') %>
+    
+    <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+
+
+
+    <script>
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        $('#createMachineForm').validate({
+    rules: {
+      name: {
+        required: true,
+      },
+      importanceLevel: {
+        required: true,
+      },
+    },
+    messages: {
+      name: {
+        required: "Skriv inn kategorinavn",
+      },
+      importanceLevel: {
+        required: "Velg viktighetsnivå",
+      },
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+
+  let problems = []
+
+     
+  // Function to create a new machine using Fetch API
+  async function createCategory() {
+            if($('#createMachineForm').valid()){
+                const name = document.getElementById('name').value;
+            const importanceLevel = document.getElementById('importanceLevel').value;
+
+            const machineData = {
+                name,
+                importanceLevel,
+                problems
+            };
+
+            try {
+                const response = await fetch('/admin/api/issues/categories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(machineData)
+                });
+
+                if (response.status == 200) {
+                    Toast.fire({
+                        icon : 'success',
+                        title : "Kategori opprettet"
+                    })
+                    setTimeout(() =>{
+                        location.href = '/issues/categories'
+                    },3000)
+                } else {
+                    Toast.fire({
+                        icon : 'success',
+                        title : (await response.json()).toString()
+                    })
+                }
+            } catch (error) {
+                Toast.fire({
+                    icon : 'error',
+                    title : error.message
+                })
+            }
+        }
+    }
+
+
+    function addProblem(){
+        let problem = document.getElementById('problem');
+        if(problem.value == ''){
+            Toast.fire({
+                icon : 'error',
+                title: 'You have to enter data first'
+            })
+        }else{
+            if(!problems.includes(problem.value)){
+                problems.push(problem.value);
+
+                renderProblems(problems)
+            }else{
+                Toast.fire({
+                    icon : 'error',
+                    title: 'problem already exists'
+                })  
+            }
+        }
+    }
+
+    function removeProblem(txt){
+        problems = problems.filter(p => p != txt)
+        renderProblems(problems)
+    }
+
+    function renderProblems(pbs){
+        let problemContainer = document.getElementById('problems-container');
+        problemContainer.innerHTML = ''
+
+        for(let problem of pbs){
+
+            const holder = document.createElement('div');
+            holder.className = 'd-flex justify-content-between align-items-center'
+            holder.style.backgroundColor = '#d9eaf7'
+            holder.style.padding = '8px'
+            holder.style.borderRadius = '8px'
+            holder.style.marginBottom = '8px'
+            holder.style.marginRight = '8px'
+
+            let problemText = document.createElement('span')
+            let problemRemove = document.createElement('i')
+            problemRemove.className = 'fa fa-trash'
+            problemRemove.style.color = 'red'
+            problemRemove.style.cursor  = 'pointer'
+
+            problemText.textContent = problem
+            problemText.style.marginRight = '8px'
+            holder.appendChild(problemText)
+
+            problemRemove.addEventListener('click', function(event){
+                removeProblem(problem)
+            })
+            holder.appendChild(problemRemove)
+            problemContainer.appendChild(holder)
+        }
+    }
+
+
+    </script>
+
+</body>
+</html>

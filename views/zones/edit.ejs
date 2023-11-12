@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rediger sone</title>
+    <!-- Add Bootstrap CSS link -->
+    <%- include('../components/headers.ejs') %>
+      <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+        <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item"><a href="/zones">Soner</a></li>
+                    <li class="breadcrumb-item"><a href="/zones"><%= zone.name %></a></li>
+                    <li class="breadcrumb-item active">Oppdater</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Oppdater sone
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="container-fluid">
+                                    <div id="infoBox" class="alert" role="alert" style="display: none;"></div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-9">
+                                          <form class="container" id="updateZoneForm">
+                                            <div>
+                                                <div class="form-group">
+                                                    <label for="zoneName">Sonenavn</label>
+                                                    <input type="text" id="zoneName" name="name" class="form-control" value="<%= zone.name %>">
+                                                </div>
+                                                <div class="d-flex justify-content-center align-items-center mt-3 btn-group">
+                                                  <button id="updateButton" class="btn btn-info btn-sm me-3 ps-3 pe-3" onclick="updateZone()">Oppdater</button>
+                                                  <a href="/zones" class="btn btn-secondary btn-sm ps-3 pe-3">Avbryt</a>
+                                      
+                                                </div>
+                                            </div>
+                                        </form>
+                                        </div>
+                                    </div>
+                                </div>                    
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+    <%- include('../components/scripts.ejs') %>
+    
+    <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+
+
+
+    <script>
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        $('#updateZoneForm').validate({
+    rules: {
+      name: {
+        required: true,
+      },
+    },
+    messages: {
+      name: {
+        required: "skriv inn sonenavn",
+      },
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+
+
+  async function updateZone(){
+    if($('#updateZoneForm').valid()){
+      const zoneName = document.getElementById('zoneName').value;
+            const zoneId = '<%= zone._id %>';
+
+            
+            // Create a JSON object with the updated data
+            const updatedZone = {
+                name: zoneName
+            };
+
+            // Send a fetch request to update the zone
+            fetch(`/admin/api/zones/${zoneId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedZone)
+            })
+            .then(async response => {
+                if (response.status == 200) {
+                  Toast.fire({
+                    icon: 'success',
+                    title: 'Sonen ble oppdatert'
+                  })
+
+
+                } else {
+                    Toast.fire({
+                    icon: 'error',
+                    title: await response.json()
+                  })
+                }
+            })
+            .catch(error => {
+              Toast.fire({
+                icon: 'error',
+                title: error.message
+              })
+            });
+    }
+  }
+
+    </script>
+
+</body>
+</html>

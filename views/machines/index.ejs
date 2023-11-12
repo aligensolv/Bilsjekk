@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maskiner</title>
+
+    <%- include('../components/headers') %>
+
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link rel="stylesheet" href="/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Theme style -->
+</head>
+<body class="hold-transition sidebar-mini">
+
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+        
+    <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item active">Maskiner</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center mb-2 container-fluid">
+                <a href="/machines/create" class="btn btn-info btn-sm mr-1">
+                    <i class="fa fa-plus"></i>
+                    <span>Legge til</span>
+                </a>
+                <a href="/issues/categories/create" class="btn btn-warning btn-sm mr-1">
+                    <i class="fa fa-plus"></i>
+                    <span>Opprett kategori</span>
+                </a>
+                <button data-toggle="modal" data-target="#confirmAllDeleteModal" class="btn btn-danger btn-sm">
+                    <i class="fa fa-trash"></i>
+                    <span>Slett alle</span>
+                </button>
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Maskindata
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                              <table id="example1" class="table table-bordered table-striped text-center">
+                                <thead>
+                                <tr>
+                                    <th>Gruppe nr:</th>
+                                    <th>Status</th>
+                                    <th>Rute</th>
+                                    <th>Hvor?</th>
+                                    <th>Categories</th>
+                                    <th>Last Active</th>
+                                    <th>Working</th>
+                                    <th>Offline</th>
+                                    <th>QR kode</th>
+                                    <th>Handlinger</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <% machines.forEach(machine => { %>
+                                        <tr>
+                                            <td><%= machine.serial %></td>
+                                            <td style="color: <%= machine.status == 'active' ? 'green' : 'red' %>; font-weight:bold"><%= machine.status == 'active' ? 'Active' : 'Inactive' %></td>
+                                            <td><%= machine.zone?.name ?? '---' %></td>
+                                            <td><%= machine.zoneLocation %></td>
+                                            <td><%= machine.categories.map(e => e.name) %></td>
+                                            <td><%= machine.lastActiveTime ?? 'N/A' %></td>
+                                            <td><%= machine.totalWorkingTime > 0 ? machine.totalWorkingTime.toFixed(0) + 'H' : machine.totalWorkingTime.toFixed(0) + 'M'%></td>
+                                            <td><%= machine.totalOfflineTime > 0 ? machine.totalOfflineTime.toFixed(0) + 'H' : machine.totalOfflineTime.toFixed(0) + 'M'%></td>
+                                            <td>
+                                                <a href="/machines/<%= machine._id %>/qrcode">
+                                                    <i class="fas fa-qrcode fa-2x"></i>
+                                                </a>
+                                            </td>
+                                            <td class="d-flex justify-content-center align-items-center">
+                                                <a href="/machines/<%= machine._id %>/edit" class="btn btn-sm btn-info mr-1">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+
+                                                <div class="btn btn-sm btn-secondary mr-1" onclick="toggleControlSide('<%= machine._id %>','<%= machine.status %>')">
+                                                    <i class="fa fa-cog"></i>
+                                                </div>
+                                                <!-- Add delete button if needed -->
+                                                <div class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteConfirmationModal<%= machine._id %>">
+                                                    <i class="fa fa-trash"></i>
+                                                </div>
+                                                
+
+
+                                                
+                                            </td>
+                                        </tr>
+                    
+                                        <div class="modal fade" id="deleteConfirmationModal<%= machine._id %>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteModalLabel">Bekreft sletting</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Lukk"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Er du sikker på at du vil slette denne P-Automat?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Avbryt</button>
+                                                        <button type="button" class="btn btn-danger" id="confirmDelete" onclick="deleteMachine('<%= machine._id %>')" data-dismiss="modal">Slett</button>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                </tbody>
+                              </table>
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+<!-- Control Sidebar -->
+<aside class="control-sidebar control-sidebar-dark">
+    <div class="p-4">
+        <i class="fa fa-arrow-left" data-widget="control-sidebar" data-slide="true" href="#" role="button"></i>
+    </div>
+
+    <div id="control-content">
+
+    </div>
+</aside>
+        <%- include('../components/footer') %>
+    </div>
+
+    <div class="modal fade" id="confirmAllDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmAllDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmAllDeleteModalLabel">Slett alle maskiner bekreftelse</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Vil du slette alle maskiner?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteAllMachines()" id="confirmAllDeleteBtn">Slett</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<%- include('../components/scripts') %>
+
+<!-- DataTables  & Plugins -->
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/plugins/jszip/jszip.min.js"></script>
+<script src="/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+<!-- Bootstrap Switch -->
+<script src="/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+
+
+<script>
+    $(function () {
+      $("#example1").DataTable({
+        "responsive": true, "lengthChange": true, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "language": {
+        "emptyTable": "Ingen data tilgjengelig",
+        "infoEmpty": "Ingen data tilgjengelig Info",
+        "zeroRecords": "Det er ingen samsvarende data"
+        } ,
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+  </script>
+<script>
+    var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        function toggleControlSide(id,status){
+        let controlContent = document.getElementById('control-content');
+
+        controlContent.innerHTML = ''
+        controlContent.classList
+            .add('pl-4')
+        controlContent.classList
+            .add('pr-2')
+        let e = document.createElement('div')
+            
+        e.setAttribute('data-widget', 'control-sidebar')
+        e.setAttribute('data-slide', 'true')
+        e.setAttribute('href', '#')
+        e.setAttribute('role', 'button')
+
+        if(status == 'active'){
+            let p = document.createElement('p')
+            p.textContent = 'Machine is active, All Is Fine'
+            controlContent.appendChild(p)
+        }else{
+            let p = document.createElement('p')
+            p.textContent = 'Machine is inactive'
+            controlContent.appendChild(p)
+
+            let button = document.createElement('button')
+            button.className = 'btn btn-info btn-sm'
+            button.textContent = 'Activate Machine'
+            button.addEventListener('click', (e) =>{
+                e.preventDefault()
+                toggleSlider(id)
+            })
+
+            let container = document.createElement('div')
+            container.className = 'd-flex justify-content-end align-items-center'
+            container.appendChild(button)
+
+            controlContent.appendChild(container)
+        }
+
+        document.body.appendChild(e)
+
+
+
+        e.click()
+            
+    }
+
+        async function toggleSlider(id){
+            console.log(id);
+            let response = await fetch(`/admin/api/machines/${id}/activate`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+
+            if(response.status === 200){
+                Toast.fire({
+                    icon: 'success',
+                    title: "Maskin aktivert"
+                })
+
+                setTimeout(() => {
+                    location.reload();
+                },3000)
+            }else{
+                Toast.fire({
+                    icon: 'error',
+                    title: await response.json()
+                })
+            }
+        }
+
+        function deleteMachine(id){
+            
+                    // Send a DELETE request to delete the machine
+                    fetch(`/admin/api/machines/${id}`, {
+                        method: 'DELETE',
+                    })
+                    .then(async (response) => {
+                        if (response.status == 200) {
+                            Toast.fire({
+                                icon: 'success',
+                                title: "Maskin aktivert"
+                            })
+
+                            setTimeout(() => location.reload(),3000)
+                        } else {
+                            Toast.fire({
+                                icon: 'error',
+                                title: await response.json()
+                            })
+                        }
+                    })
+                    .catch((error) => {
+                        Toast.fire({
+                                icon: 'error',
+                                title: error.message
+                            })
+                    });
+        }
+
+        function deleteAllMachines(){
+            
+            // Send a DELETE request to delete the machine
+            fetch(`/admin/api/machines`, {
+                method: 'DELETE',
+            })
+            .then(async (response) => {
+                if (response.status == 200) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: "Alle maskiner ble slettet"
+                    })
+
+                    setTimeout(() => location.reload(),3000)
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: await response.json()
+                    })
+                }
+            })
+            .catch((error) => {
+                Toast.fire({
+                        icon: 'error',
+                        title: error.message
+                    })
+            });
+}
+</script>
+</body>
+</html>

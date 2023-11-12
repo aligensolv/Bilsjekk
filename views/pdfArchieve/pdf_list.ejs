@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arkiv</title>
+
+    <%- include('../components/headers') %>
+
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Theme style -->
+</head>
+<body class="hold-transition sidebar-mini">
+
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+    <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item active">Arkiv</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="row container-fluid">
+                <div class="col-lg-6 col-md-9 col-sm-12">
+                    <div class="form-group">
+                        <div class="input-group date" id="reservationdate" data-target-input="nearest">
+                            <input type="text" class="form-control datetimepicker-input" data-target="#reservationdate"/>
+                            <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Arkiv Data
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                              <table id="example1" class="table table-bordered table-striped text-center">
+                                <thead>
+                                <tr>
+                                    <th>Dato</th>
+                                    <th>Bruker</th>
+                                    <th>ID</th>
+                                    <th>PDF</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <%if(pdfs.length == 0){%>
+                                        <tr>
+                                            <td colspan="5">Ingen pdf-er ennå</td>
+                                        </tr>
+                                    <%} else{%>
+                                        <% pdfs.forEach(pdf => { %>
+                                            <tr>
+                                                <td><%= pdf.createdAt %></td>
+                                                <td><%= pdf.username ?? 'Fjernet'  %></td>
+                                                <td><%= pdf.accountId ?? "Ukjent"  %></td>
+                                                <td>
+                                                    <a href="<%= pdf.link %>">
+                                                        <i class="fa fa-file-pdf fa-2x" style="color:cadetblue;"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                        
+                                            <div class="modal fade" id="deletePdfModal<%= pdf._id %>" tabindex="-1" aria-labelledby="deletePdfModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deletePdfModalLabel">Slett PDF-bekreftelse</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Er du sikker på at du vil slette denne PDF-filen?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                                                            <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deletePdf('<%= pdf._id %>')" id="confirmDeleteBtn">Slett</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                        
+                                        <% }); %>
+                                    <%}%>
+                                </tbody>
+                              </table>
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+    <div class="modal fade" id="confirmAllDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmAllDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmAllDeleteModalLabel">Slett alle pdf-bekreftelser</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Vil du slette alle pdf-er?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteAllPdfs()" id="confirmAllDeleteBtn">Slett</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<%- include('../components/scripts') %>
+
+<!-- DataTables  & Plugins -->
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/plugins/jszip/jszip.min.js"></script>
+<script src="/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+    //Date picker
+    $('#reservationdate').datetimepicker({
+        format: 'L'
+    })
+
+    $('#reservationdate').on('change.datetimepicker',function(e) {
+        let date =  moment(e.date._d).format('YYYY-MM-DD')
+        console.log(date);
+    })
+</script>
+
+<script>
+    $(function () {
+      $("#example1").DataTable({
+        "responsive": true, "lengthChange": true, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "language": {
+        "emptyTable": "Ingen data tilgjengelig",
+        "infoEmpty": "Ingen data tilgjengelig Info",
+        "zeroRecords": "Det er ingen samsvarende data"
+        } ,
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+  </script>
+<script>
+    var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+
+    async function archieveAll(){
+        try{
+            let response = await fetch('/admin/api/archieves',{
+                method:'POST'
+            })
+
+            if(response.status == 200){
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Alle pdf-filer ble arkivert'
+                })
+            }else{
+                Toast.fire({
+                    icon: 'error',
+                    title: (await response.json()).toString()
+                })
+            }
+        }catch(error){
+            Toast.fire({
+                icon: 'error',
+                title: error.message
+            })
+        }
+    }
+
+    function deletePdf(pdfId) {
+
+        fetch(`/admin/api/pdfs/${pdfId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+        })
+            .then(async response => {
+                if (response.status == 200) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'pdf ble slettet'
+                    })
+                    setTimeout(() => location.reload(),3000)
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: (await response.json()).toString()
+                    })
+                }
+            })
+            .catch(error => {
+                Toast.fire({
+                    icon: 'error',
+                    title: error.message
+                })
+            });
+    }
+
+    const deleteAllPdfModal = document.getElementById('deleteAllPdfModal');
+
+    function deleteAllPdfs() {
+        // Open the Bootstrap modal
+        deleteAllPdfModal.classList.add('show');
+        deleteAllPdfModal.style.display = 'block';
+
+        fetch(`/admin/api/pdfs`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+        })
+            .then(async response => {
+                if (response.status == 200) {
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Alle pdf-er ble slettet'
+                    })
+                    setTimeout(() => location.reload(),3000)
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: (await response.json()).toString(),
+                    })
+                }
+            })
+            .catch(error => {
+                Toast.fire({
+                    icon: 'error',
+                    title: error.message
+                })
+            });
+    }
+
+
+
+</script>
+</body>
+</html>

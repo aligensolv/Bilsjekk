@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMEIS</title>
+
+    <%- include('../components/headers') %>
+
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Theme style -->
+
+  <style>
+    thead input {
+        width: 100%;
+    }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini">
+
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+    <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item active">Imeis</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center mb-2 container-fluid">
+                <a href="/imeis/new" class="btn btn-info btn-sm mr-1">
+                    <i class="fa fa-plus"></i>
+                    <span>Legge til</span>
+                </a>
+                <button data-toggle="modal" data-target="#confirmAllDeleteModal" class="btn btn-danger btn-sm">
+                    <i class="fa fa-trash"></i>
+                    <span>Slett alle</span>
+                </button>
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Imeis Data
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                              <table id="example1" class="table table-bordered table-striped text-center">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Ny IMEI</th>
+                                        <th scope="col">IMEI-navn</th>
+                                        <th scope="col">sone</th>
+                                        <th scope="col">Handlinger</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% imeis.forEach(function(imei) { %>
+                                        <tr>
+                                            <td><%= imei.serial %></td>
+                                            <td><%= imei.name ?? '' %></td>
+                                            <td><%= imei.zone?.name ?? '' %></td>
+                                            <td class="controls">
+                                                <a href="/imeis/<%= imei._id %>/edit" class="btn btn-info btn-sm">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                                <button class="btn btn-danger btn-sm" data-target="#confirmDeleteModal<%= imei._id %>" data-toggle="modal">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+
+                                        <div class="modal fade" id="confirmDeleteModal<%= imei._id %>" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="confirmDeleteModalLabel">Bekreft sletting</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                          </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Er du sikker på at du vil slette denne IMEI-en?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                                                        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteImei('<%= imei._id %>')">Slett</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                </tbody>
+                              </table>
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+    <div class="modal fade" id="confirmAllDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmAllDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmAllDeleteModalLabel">Delete all cars confirmation</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Do you want to delete all cars?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteAllImeis()" id="confirmAllDeleteBtn">Slett</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<%- include('../components/scripts') %>
+
+<!-- DataTables  & Plugins -->
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/plugins/jszip/jszip.min.js"></script>
+<script src="/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+    $(function () {
+
+
+      $("#example1").DataTable({
+        "responsive": true, "lengthChange": true, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "language": {
+        "emptyTable": "Ingen data tilgjengelig",
+        "infoEmpty": "Ingen data tilgjengelig Info",
+        "zeroRecords": "Det er ingen samsvarende data"
+        } ,
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+  </script>
+<script>
+    var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+
+        async function deleteImei(id){
+            // Send DELETE request
+            fetch(`/admin/api/imeis/${id}`, {
+                    method: 'DELETE'
+                })
+                .then(async response => {
+                    if (response.status == 200) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: "Imei ble slettet"
+                        })
+                        setTimeout(() =>{
+                          location.reload();
+                        },3000)
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: await response.json()
+                        })
+                    }
+                })
+                .catch(error => {
+                    Toast.fire({
+                        icon: 'error',
+                        title: error.message
+                    })
+                });
+        }
+
+        async function deleteAllImeis(){
+            // Send DELETE request
+            fetch(`/admin/api/imeis`, {
+                    method: 'DELETE'
+                })
+                .then(async response => {
+                    if (response.status == 200) {
+                        Toast.fire({
+                            icon: 'success',
+                            title: "Alle imeis ble slettet"
+                        })
+                        setTimeout(() =>{
+                          location.reload();
+                        },3000)
+                    } else {
+                        Toast.fire({
+                            icon: 'error',
+                            title: await response.json()
+                        })
+                    }
+                })
+                .catch(error => {
+                    Toast.fire({
+                        icon: 'error',
+                        title: error.message
+                    })
+                });
+        }
+</script>
+</body>
+</html>

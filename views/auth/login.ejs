@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Nordic Admin logg inn</title>
+        <%- include('../components/headers') %>
+    </head>
+    <body class="hold-transition login-page">
+        <div class="container-fluid login-box">
+            <div class="card">
+                <div class="card-body login-card-body">
+                  <p class="login-box-msg">logg inn</p>
+            
+                  <form id="loginForm">
+                    <div class="input-group mb-3">
+                      <input type="text" class="form-control" placeholder="Brukernavn" id="username">
+                      <div class="input-group-append">
+                        <div class="input-group-text">
+                          <span class="fas fa-user"></span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="input-group mb-3">
+                      <input type="password" class="form-control" placeholder="Passord" id="password">
+                      <div class="input-group-append">
+                        <div class="input-group-text">
+                          <span class="fas fa-lock"></span>
+                        </div>
+                      </div>
+                    </div>
+
+                      <!-- /.col -->
+                      <div class="col-4 float-sm-right">
+                        <button type="submit" class="btn btn-primary btn-block">Logg inn</button>
+                      </div>
+                      <!-- /.col -->
+                    </div>
+                  </form>
+            
+            
+                </div>
+                <!-- /.login-card-body -->
+              </div>
+        </div>
+    </body>
+
+    <%- include('../components/scripts') %>
+    <script>
+      var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+        onload = () =>{
+            let form = document.querySelector('#loginForm')
+            form.addEventListener('submit',async (e) =>{
+                e.preventDefault()
+
+                let username = document.querySelector('#username')
+                let password = document.querySelector('#password')
+
+                let response = await fetch('/admin/api/login',{
+                    method:'POST',headers:{'Content-Type':'application/json'}, body : JSON.stringify({
+                        'username':username.value,
+                        'password':password.value
+                    })
+                })
+
+                if(response.status == 200){
+                  Toast.fire({
+                      icon: 'success',
+                      title: "Logg inn"
+                    })
+                    setTimeout(async () =>{
+                      let json = await response.json()
+                      if(json.role == 'admin'){
+                        location.href = '/'
+                      }else{
+                        if(json.permissions.some(p => p.route == 'dashboard')){
+                          location.href = '/reports/dashboard'
+                        }else{
+                          location.href = '/managers/dashboard'
+                        }
+                      }
+                    },2000)
+                }
+                else if(response.status == 404){
+                    Toast.fire({
+                      icon: 'error',
+                      title: "Det er ikke en slik leder/admin"
+                    })
+                }else if(response.status == 403){
+                  Toast.fire({
+                    icon: 'error',
+                    title: "Ikke en stab"
+                  })
+                }else if(response.status == 401){
+                  Toast.fire({
+                      icon: 'error',
+                      title: "Passordet er ikke riktig"
+                    })
+                }else{
+                  Toast.fire({
+                    icon: 'error',
+                    title: "Ukjent status"
+                  })
+                }
+            })
+        }
+    </script>
+    </html>

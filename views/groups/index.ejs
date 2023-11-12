@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gruppeliste</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .controls{
+            display: flex;
+        }
+
+        .controls > *{
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
+<%- include('../components/navbar') %>
+<div class="mt-4"></div>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col">
+            <h2>Gruppeliste</h2>
+        </div>
+        <div class="col text-right">
+            <a href="/groups/create" class="btn btn-info btn-sm">Opprett ny gruppe</a>
+            <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteAllModal">Slett alle</button>
+        </div>
+    </div>
+    <br>
+
+    <div class="row">
+        <div class="col">
+            <div id="infoBox" class="alert alert-success" role="alert" style="display: none;"></div>
+            <table class="table table-bordered table-striped text-center table-hover">
+                <thead>
+                <tr>
+                    <th>Navn</th>
+                    <th>Merke</th>
+                    <th>Tekst</th>
+                    <th>Handlinger</th>
+                </tr>
+                </thead>
+                <tbody>
+                <% if(groups.length == 0){ %>
+                    <tr>
+                        <td colspan="4">ingen gruppelist</td>
+                    </tr>
+                <%} else{%>
+                    <% groups.forEach(group => { %>
+                        <tr>
+                            <td><%= group.name %></td>
+                            <td><%= group.notice %></td>
+                            <td><%= group.text %></td>
+                            <td class="controls">
+                                <a href="/groups/<%= group._id %>/edit" class="btn  btn-primary btn-sm mr-2">Redigere</a>
+                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteModal<%= group._id %>">Slett</button>
+
+
+                            </td>
+                        </tr>
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteModal<%= group._id %>" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel">Bekreft Sletting</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Er du sikker på at du vil slette gruppen "<%= group.name %>"?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteGroup('<%= group._id %>')">Slett</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="deleteAllModal" tabindex="-1" role="dialog" aria-labelledby="deleteAllModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteAllModalLabel">Bekreft Sletting</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Er du sikker på at du vil slette alle grupper?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                                        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteAllGroups()">Slett</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <%}%>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function deleteGroup(groupId) {
+        try {
+            const response = await fetch(`/admin/api/groups/${groupId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+            });
+
+            if (response.status == 200) {
+                // Show success message and reload after successful deletion
+                showInfoBox(`Gruppen ble slettet.`, 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+            } else {
+                // Show error message
+                showInfoBox(`Kunne ikke slette gruppen. Prøv igjen.`, 'danger');
+            }
+        } catch (error) {
+            console.error('Error deleting group:', error);
+            showInfoBox(`En feil oppstod under sletting av gruppen. Prøv igjen.`, 'danger');
+        }
+    }
+    async function deleteAllGroups() {
+        try {
+            const response = await fetch(`/admin/api/groups`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8'
+                },
+            });
+
+            if (response.status == 200) {
+                // Show success message and reload after successful deletion
+                showInfoBox(`Alle grupper ble slettet.`, 'success');
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+            } else {
+                // Show error message
+                showInfoBox(`Kunne ikke slette alle grupper. Prøv igjen senere.`, 'danger');
+            }
+        } catch (error) {
+            console.error('Error deleting group:', error);
+            showInfoBox(`Det oppsto en feil under sletting av alle grupper. Prøv igjen senere.`, 'danger');
+        }
+    }
+
+
+    function showInfoBox(message, type) {
+        const infoBox = document.getElementById('infoBox');
+        infoBox.innerHTML = message;
+        infoBox.classList.add(`alert-${type}`);
+        infoBox.style.display = 'block';
+        setTimeout(() => {
+            infoBox.style.display = 'none';
+            infoBox.innerHTML = '';
+            infoBox.classList.remove(`alert-${type}`);
+        }, 3000);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>K.S (Kjøring Skade) History</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <%- include('../components/headers') %>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <%- include('../components/navbar') %>
+    <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %> 
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item"><a href="/users">Brukere</a></li>
+                    <li class="breadcrumb-item"><a href="/users"><%= user.accountId %></a></li>
+                    <li class="breadcrumb-item active">K.S</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+        <div class="content">
+            <div class="container-fluid  mt-3">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    
+                    <input type="text" class="form-control mr-2" id="searchInput" placeholder="Søk etter dato, navn, bruker, ID eller lenke">
+            
+                    <select name="violationsFilter" id="violationsFilter" class="mr-3 custom-select">
+                        <option value="0">Hele tiden</option>
+                        <option value="6">I går</option>
+                        <option value="1">I dag</option>
+                        <option value="2">3 dager siden</option>
+                        <option value="3">en uke siden</option>
+                        <option value="4">en måned siden</option>
+                        <option value="5">ett år siden</option>
+                    </select>
+            
+                    <div id="vio-num" class="font-weight-bold"></div>
+                </div>
+            
+                <div id="violations" class="row">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include('../components/footer') %>
+
+</div>
+
+<%- include('../components/scripts') %>
+
+<script>
+    // Your existing code here
+
+    // Function to filter violation cards based on user input
+function filterViolations() {
+    const searchInput = document.getElementById('searchInput');
+    const filter = searchInput.value.toLowerCase();
+    const violationCards = document.querySelectorAll('.violation-card');
+
+    violationCards.forEach((card) => {
+        const cardContent = card.textContent.toLowerCase();
+        if (cardContent.includes(filter)) {
+            card.style.display = '';
+            card.parentElement.style.display = ''
+        } else {
+            card.style.display = 'none';
+            card.parentElement.style.display = 'none'
+        }
+
+        // Additionally, hide or remove "removed" blocks within each card
+        const removedBlocks = card.querySelectorAll('.violation-description.removed');
+        removedBlocks.forEach((removedBlock) => {
+            if (cardContent.includes(filter)) {
+                removedBlock.style.display = '';
+                removedBlock.parentElement.style.display = ''
+            } else {
+                removedBlock.style.display = 'none'; // Or use 'remove' to completely remove them
+                removedBlock.parentElement.style.display = 'none'
+            }
+        });
+    });
+}
+
+    // Add an event listener to the search input for filtering violations
+    const searchInput = document.getElementById('searchInput');
+    searchInput.addEventListener('input', filterViolations);
+</script>
+
+<script>
+
+    // Function to display violations
+    async function displayViolations() {
+    
+        let response = await fetch(`/admin/api/violations/user/${'<%- accountId %>'}`)
+        let violationsData = await response.json()
+
+
+        const violationsContainer = document.getElementById('violations');
+
+        violationsData.forEach(violation => {
+            violationsContainer.innerHTML += 
+`
+<div class="card bg-light d-flex flex-fill violation-card col-4">
+                <div class="card-header text-muted border-bottom-0">
+                  ${violation.createdAt}
+                </div>
+                <div class="card-body pt-0">
+                  <div class="row">
+                    <div class="col-5">
+                      <h2 class="lead"><b>K.S</b></h2>
+                      <p class="text-muted text-sm">${violation.violations}</p>
+                      
+                    </div>
+                    <div class="col-6 text-center">
+                        <h2 class="lead"><b>Makulering</b></h2>
+                      <p class="text-muted text-sm">${violation.removed ?? '---'}</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+`
+
+        });
+    }
+
+    
+
+    // Call the function to display violations when the page loads
+    window.addEventListener('DOMContentLoaded', () => {
+        displayViolations();
+    });
+</script>
+
+<script>
+    async function fetchData(url) {
+        const response = await fetch(url,{
+            headers:{
+                'account': '<%- accountId %>'
+            }
+        });
+        if (response.status === 200) {
+            return await response.json();
+        } else {
+            throw new Error('Failed to fetch data');
+        }
+    }
+
+    async function updateCount() {
+        const vioHolder = document.getElementById('vio-num');
+        const selectVio = document.getElementById('violationsFilter');
+        const value = selectVio.value;
+
+        try {
+            let responseData = await fetchData(`/admin/api/violations/removed/${value}`);
+            vioHolder.textContent = responseData;
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateCount();
+
+        const selectVio = document.getElementById('violationsFilter');
+        selectVio.addEventListener('change', updateCount);
+    });
+</script>
+</body>
+</html>

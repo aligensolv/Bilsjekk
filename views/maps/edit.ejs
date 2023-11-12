@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rediger kart</title>
+    <!-- Add Bootstrap CSS link -->
+    <%- include('../components/headers.ejs') %>
+      <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+
+    <style>
+        .live-preview {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #ccc;
+            margin: 10px 0;
+        }
+
+        #map {
+            width: 100%;
+            height: 450px;
+        }
+    </style>
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+        <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item"><a href="/maps">Kart</a></li>
+                    <li class="breadcrumb-item"><a href="/maps  "><%= map._id %></a></li>
+                    <li class="breadcrumb-item active">Oppdater</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Oppdater kart
+                              </h3>
+                            </div>
+
+                            
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="container-fluid">
+                                    <div>
+                                        <div id="map"></div>
+                              
+                                      <form id="updateMapForm">
+                                          <div class="mb-3 mt-3 d-flex justify-content-between align-items-center">
+                                            <div class="mr-2 w-100">
+                                              <label for="longitude" class="form-label">Lengdegrad</label>
+                                              <input type="text" class="form-control" id="longitude" name="longitude" value="<%= map.longitude %>">
+                                          </div>
+                                          <div class="w-100">
+                                              <label for="latitude" class="form-label">Breddegrad</label>
+                                              <input type="text" class="form-control" id="latitude" name="latitude" value="<%= map.latitude %>">
+                                          </div>
+                                          </div>
+                                          <div class="mb-3">
+                                              <label for="data" class="form-label">Data <a href="https://geojson.io/" target="_blank">åpne for å redigere</a></label>
+                                              <textarea class="form-control" id="data" name="data" rows="4"><%= map.data %></textarea>
+                                          </div>
+                                          
+                                          <div class="mb-3">
+                                            <label for="zone" class="form-label">Velg Sone</label>
+                                            <select id="zone" name="zone" class="form-select custom-select">
+                                                <!-- Options will be added dynamically using JavaScript -->
+                                            </select>
+                                        </div>
+                                        <div class="d-flex justify-content-center align-items-center mb-3 btn-group">
+                                          <button type="button" class="btn btn-info me-2 ps-3 pe-3" id="updateButton" onclick="updateMap()">Lagre endringer</button>
+                                          <a href="/maps" class="btn btn-secondary  ps-3 pe-3">Avbryt</a>
+                                        </div>
+                              
+                                      </form>
+                                  </div>
+                                </div>                    
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+    <%- include('../components/scripts.ejs') %>
+    
+    <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+<script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_RMmoc5iVAGRDfxi8WLjQc27_QocN-eI&libraries=places"></script>
+
+
+
+    <script>
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        $('#updateMapForm').validate({
+    rules: {
+      latitude: {
+        required: true,
+      },
+      longitude: {
+        required: true,
+      },
+      zone: {
+        required: true
+      },
+      data:{
+        required: true,
+      }
+    },
+    messages: {
+      latitude: {
+        required: "breddegrad er nødvendig",
+      },
+      longitude: {
+        required: "lengdegrad er nødvendig",
+      },
+      zone: {
+        required:"velg sone"
+      },
+      data:{
+        required: "du må legge inn kartdata"
+      }
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+
+  const map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: +'<%- map.latitude %>', lng: +'<%- map.longitude %>' }, // Centered on Norway
+        zoom: 14, // Adjust the zoom level as needed
+        mapTypeId: google.maps.MapTypeId.HYBRID
+    });
+
+          // Function to parse and display GeoJSON data on the map
+function displayGeoJSONData(data) {
+    try {
+        const geoJson = JSON.parse(data);
+
+        // Create a Data layer and add it to the map
+        const dataLayer = new google.maps.Data({ map: map });
+
+          dataLayer.addGeoJson(geoJson);        
+        
+
+        // Set the style for the GeoJSON features (customize as needed)
+        dataLayer.setStyle({
+            fillColor: 'blue',
+            strokeColor: 'blue',
+            fillOpacity: 0.35,
+            strokeWeight: 1
+        });
+    } catch (error) {
+        console.error('Error parsing GeoJSON data:', error);
+    }
+}
+
+// Call the function to display GeoJSON data when the page loads
+google.maps.event.addDomListener(window, 'load', () => {
+    displayGeoJSONData(document.getElementById('data').value);
+});
+
+// Call the function whenever the 'data' textarea value changes
+document.getElementById('data').addEventListener('input', () => {
+    const newData = document.getElementById('data').value;
+    displayGeoJSONData(newData);
+});
+
+    </script>
+
+    <script>
+      // Function to populate the zone dropdown with data from /admin/api/zones
+      async function populateZoneDropdown() {
+          try {
+              const zoneDropdown = document.getElementById('zone');
+
+              // Fetch zones data from /admin/api/zones
+              const response = await fetch('/admin/api/zones');
+              const zones = await response.json();
+
+              // Populate the dropdown options
+              zones.forEach((zone) => {
+                  const option = document.createElement('option');
+                  option.value = zone._id;
+                  option.text = zone.name;
+                  zoneDropdown.appendChild(option);
+              });
+          } catch (error) {
+              console.error('Error fetching and populating zones:', error);
+          }
+      }
+
+      // Function to update the map using Fetch
+      async function updateMap() {
+          try {
+              const mapId = '<%= map._id %>';
+              const longitude = document.getElementById('longitude').value;
+              const latitude = document.getElementById('latitude').value;
+              const data = document.getElementById('data').value;
+              const zone = document.getElementById('zone').value;
+
+              const formData = {
+                  longitude,
+                  latitude,
+                  data,
+                  zone
+              };
+
+              const response = await fetch(`/admin/api/maps/${mapId}`, {
+                  method: 'PUT',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(formData)
+              });
+
+              if (response.status == 200) {
+                Toast.fire({
+                    icon: 'success',
+                    title: "Kart ble oppdatert"
+                })
+            } else {
+                Toast.fire({
+                    icon: 'error',
+                    title: (await response.json()).toString(),
+                })
+            }
+          } catch (error) {
+            Toast.fire({
+                icon: 'error',
+                title:error.message,
+            })
+        }
+      }
+
+      // Invoke the code when the DOM content is loaded
+      document.addEventListener('DOMContentLoaded', () => {
+          // Populate the zone dropdown when the page loads
+          populateZoneDropdown();
+      });
+    </script>
+
+</body>
+</html>
+
+

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            margin: 5px 0;
+        }
+        .reports {
+            width: 60%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 2px solid;
+        }
+        .reports th, td {
+            border: 2px solid;
+            padding: 8px;
+            text-align: left;
+            background-color: #f2f2f2;
+        }
+
+
+        .reports td[colspan="2"]{
+            text-align: center;
+        }
+
+        .reports th {
+            background-color: #f2f2f2;
+        }
+
+        .answers {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid grey;
+        }
+        .answers th, td {
+            border: 1px solid grey;
+            padding: 8px;
+            text-align: left;
+            background-color: #f2f2f2;
+        }
+
+
+        .answers td[colspan="2"]{
+            text-align: center;
+        }
+
+        .answers th {
+            background-color: #f2f2f2;
+        }
+
+        .answers td:first-child {
+            width: 50%;
+        }
+
+        .answers td:last-child {
+            color:red;
+            border: 1px solid grey;
+        }
+
+
+
+
+        img {
+            margin-top: 20px;
+            max-width: 100%;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+        .image-item {
+            text-align: center;
+        }
+        .image-item img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .container{
+            width: 80%;
+        }
+
+        .svg-container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            pointer-events: none; /* Make the SVG not intercept mouse events */
+        }
+
+        .headline{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="svg-container">
+    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="100,0 0,0 100,100" fill="cornflowerblue" />
+    </svg>
+</div>
+<div class="container">
+    <div class="tria"></div>
+    <div class="headline">
+        <img src="https://lawyer.bilsjekk.in/images/consultations/6.jpg" alt="Muesem" width="50px" height="50px">
+        <h2>Dagns Report</h2>
+        <div></div>
+    </div>
+    <hr>
+    <table class="reports">
+        <colgroup>
+            <col style="width: auto;">
+            <col style="width: auto;">
+            <col style="width: 100%;">
+        </colgroup>
+        <tr>
+            <td colspan="2">Location</td>
+            <td>Sample Location</td>
+        </tr>
+        <tr>
+            <td colspan="2">Car</td>
+            <td>ABC123 456</td>
+        </tr>
+        <tr>
+            <td colspan="2">Shift</td>
+            <td>Monday - Morning</td>
+        </tr>
+        <tr>
+            <td colspan="2">Date</td>
+            <td>2023-08-16</td>
+        </tr>
+        <tr>
+            <td colspan="2">User</td>
+            <td>John Doe - 12345</td>
+        </tr>
+        <tr>
+            <td colspan="2">Violations<br>K.S</td>
+            <td>Speeding</td>
+        </tr>
+    </table>
+
+
+    <table class="answers">
+        <tr>
+            <th style="text-align: center">Title</th>
+            <th style="text-align: center">Status</th>
+            <th style="text-align: center">Notes</th>
+        </tr>
+        <tr>
+            <td>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Facere consectetur dolores ex ducimus quod adipisci culpa amet vel officiis eligendi tempore, optio cumque laudantium, nemo minima commodi doloribus fugiat magni.</td>
+            <td style="text-align: center">Ja</td>
+            <td style="text-align: center;">Yes</td>
+        </tr>
+        <tr>
+            <td>Violation 2</td>
+            <td style="text-align: center">Ja</td>
+            <td style="text-align: center;">XXX</td>
+        </tr>
+        <tr>
+            <td>Violation 3</td>
+            <td style="text-align: center">Ja</td>
+            <td style="text-align: center;">Yes</td>
+        </tr>
+        <tr>
+            <td>Violation 4</td>
+            <td style="text-align: center">Ja</td>
+            <td style="text-align: center;">XXX</td>
+        </tr>
+    </table>
+    <div>
+        <div class="headline">
+            <img src="https://lawyer.bilsjekk.in/images/consultations/6.jpg" alt="Muesem" width="50px" height="50px">
+            <h2>Bilde</h2>
+            <div></div>
+        </div>
+        <hr>
+        <div class="image-grid" style="page-break-before: always;">
+            <div class="image-item">
+                <h2>image1</h2>
+                <img src="https://lawyer.bilsjekk.in/images/consultations/6.jpg" alt="image1">
+            </div>
+            <div class="image-item">
+                <h2>image2</h2>
+                <img src="https://lawyer.bilsjekk.in/images/consultations/6.jpg" alt="image2">
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

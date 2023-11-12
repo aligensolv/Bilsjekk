@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: #1e3a68;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .error-container {
+            text-align: center;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            color: #ff3f34;
+            font-size: 4rem;
+            font-weight: bold;
+        }
+
+        p {
+            font-size: 1.5rem;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        a {
+            text-decoration: none;
+            color: #fff;
+            background: #007bff;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: background 0.3s;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        a:hover {
+            background: #0056b3;
+        }
+    </style>
+    <title>401 Uautorisert</title>
+</head>
+<body>
+    <div class="error-container">
+        <h1>401 Uautorisert</h1>
+        <p>Uff, det ser ut til at du ikke har tilgang til denne siden.</p>
+        <a href="/managers/dashboard">Sende meg til hovedsiden</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oppdater maskin</title>
+    <%- include('../components/headers.ejs') %> 
+      <!-- SweetAlert2 -->
+      <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+      <!-- Toastr -->
+      <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+            <!-- Select2 -->
+  <link rel="stylesheet" href="../../plugins/select2/css/select2.min.css">
+  <link rel="stylesheet" href="../../plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+</head>
+<body>
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+        <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item"><a href="/machines">Maskiner</a></li>
+                    <li class="breadcrumb-item"><a href="/machines"><%= machine.serial %></a></li>
+                    <li class="breadcrumb-item active">Oppdater</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Oppdater maskin
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="container-fluid">
+                                    <div id="infoBox" class="alert" role="alert" style="display: none;"></div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-9">
+                                            <form class="container-fluid" id="updateMachineForm">
+                                                
+                                                <div class="mb-3">
+                                                    <label for="serial" class="form-label">Gruppe nr:</label>
+                                                    <input type="number" id="serial" class="form-control" value="<%= machine.serial %>" required>
+                                                </div>
+
+                                
+                                                <div class="form-group">
+                                                    <label>Route</label>
+                                                    <select class="custom-select" id="zone">
+                                                    
+                                                    </select>
+                                                  </div>
+
+
+                                                  <div class="form-group">
+                                                    <label>Category</label>
+                                                    <select class="select2" id="category" name="category"  multiple="multiple" data-placeholder="Select a State" style="width: 100%;">
+                                                  
+                                                    </select>
+                                                  </div>
+                                    
+                                        
+                                                <div class="mb-3">
+                                                    <label for="zoneLocation" class="form-label">hvor?</label>
+                                                    <input type="text" id="zoneLocation" class="form-control" value="<%= machine.zoneLocation %>" required>
+                                                </div>
+                                        
+                                                <div class="d-flex justify-content-center align-items-center btn-group">
+                                                    <button id="updateButton" type="button" class="btn btn-primary me-3" onclick="updateMachine()">Oppdater</button>
+                                                    <a href="/machines" class="btn btn-secondary">Avbryt</a>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>                    
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+
+    <%- include('../components/scripts.ejs') %>
+    <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+<script src="../../plugins/select2/js/select2.full.min.js"></script>
+
+
+<script>
+            $('.select2').select2()
+
+var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        $('#createMachineForm').validate({
+    rules: {
+      serial: {
+        required: true,
+      },
+      zone: {
+        required: true,
+      },
+      zoneLocation: {
+        required: true
+      },
+    },
+    messages: {
+      serial: {
+        required: "skriv inn serienummer",
+      },
+      zone: {
+        required: "du må velge en sone",
+      },
+      zoneLocation: "Vennligst oppgi soneplassering",
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+
+  async function updateMachine() {
+            const machineId = '<%= machine._id %>';
+            const serial = document.getElementById('serial').value;
+            const zoneLocation = document.getElementById('zoneLocation').value;
+            let latitude = 0;
+            let longitude = 0;
+            const zone = document.getElementById('zone').value;
+            const categories = $("#category").val()
+
+
+            const apiKey = 'AIzaSyB_RMmoc5iVAGRDfxi8WLjQc27_QocN-eI';
+
+            // Define the geocoding request URL
+            const geocodingUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(zoneLocation)}&key=${apiKey}`;
+            let geoResponse = await fetch(geocodingUrl)
+            let geoJson = await geoResponse.json();
+
+            if (geoResponse.status == 200 && geoJson.results.length > 0) {
+                  // Extract the latitude and longitude from the first result
+                  const location = geoJson.results[0].geometry.location;
+                  latitude = location.lat;
+                  longitude = location.lng;
+                  
+
+                }
+
+
+                console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+
+
+            const machineData = {
+                serial,
+                zone,
+                zoneLocation,
+                categories,
+                latitude,
+                longitude
+            };
+
+            try {
+                const response = await fetch(`/admin/api/machines/${machineId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(machineData)
+                });
+
+                if (response.status == 200) {
+                    Toast.fire({
+                        icon : 'success',
+                        title : "Maskindata ble oppdatert"
+                    })
+                } else {
+                    Toast.fire({
+                        icon : 'error',
+                        title: (await response.json()).toString(),
+                    })
+                }
+            } catch (error) {
+                Toast.fire({
+                    icon : 'error',
+                    title: error.message
+                })
+            }
+        }
+
+        // Function to populate the zone dropdown with data from /admin/api/zones
+        async function populateZoneDropdown() {
+            try {
+                const zoneDropdown = document.getElementById('zone');
+
+                // Fetch zones data from /admin/api/zones
+                const response = await fetch('/admin/api/zones');
+                const zones = await response.json();
+
+                // Populate the dropdown options
+                zones.forEach((zone) => {
+                    const option = document.createElement('option');
+                    option.value = zone._id;
+                    option.text = zone.name;
+                    zoneDropdown.appendChild(option);
+                });
+
+                // Set the selected zone
+                const machineZoneId = '<%= machine.zone._id %>';
+                zoneDropdown.value = machineZoneId;
+            } catch (error) {
+                console.error('Error fetching and populating zones:', error);
+            }
+        }
+
+        // Function to populate the zone dropdown with data from /admin/api/zones
+        async function populateCategoryDropdown() {
+            try {
+                const categoryDropdown = document.getElementById('category');
+
+                // Fetch zones data from /admin/api/zones
+                const response = await fetch('/admin/api/issues/categories');
+                const categories = await response.json();
+                console.log(categories);
+
+                let jumpColors = {
+                    1: 'red',
+                    2: 'gold',
+                    3: 'green'
+                }
+
+                let jsMachine = <%- jsMachine %>;
+
+
+                // Populate the dropdown options
+                categories.forEach((category) => {
+                    const option = document.createElement('option');
+                    option.value = category._id;
+                    option.text = category.name;
+                    option.setAttribute('data-color',category.importanceLevel)
+
+                    option.style.background = jumpColors[category.importanceLevel]
+                    categoryDropdown.appendChild(option);
+                });
+
+                let vals = jsMachine.categories.map(c => c._id)
+                
+                $('#category').val(vals).trigger('change.select2');
+
+                categoryDropdown.addEventListener('change', function (e) {
+                        e.preventDefault();
+                        let selected = categoryDropdown.selectedIndex
+                        let selectedOption = categoryDropdown.options[selected]
+                        console.log(selectedOption);
+                        categoryDropdown.style.background = jumpColors[selectedOption.getAttribute('data-color')];
+                    })
+
+
+            } catch (error) {
+                console.error('Error fetching and populating zones:', error);
+            }
+        }
+
+        // Invoke the code when the DOM content is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Populate the zone dropdown when the page loads
+            populateZoneDropdown();
+            populateCategoryDropdown();
+        });
+     
+  
+</script>
+</body>
+</html>
+

@@ -1,0 +1,329 @@
+ <!-- Main Sidebar Container -->
+ <aside class="main-sidebar sidebar-dark-secondary elevation-4">
+  <!-- Brand Logo -->
+  <a href="/" class="brand-link">
+    <img src="/images/gensolv.png" alt="Gensolv" class="brand-image img-circle elevation-3" style="opacity: .8">
+    <span class="brand-text font-weight-light">Nordic Cpanel</span>
+  </a>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="true">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+        <li class="nav-item">
+            <a href="/" class="nav-link active bg-success">
+                <i class="nav-icon fas fa-tachometer-alt"></i>
+                <p>
+                  Dashbord
+                </p>
+              </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-car-alt" ></i>
+            <p>
+              Biler
+              <i class="right fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/cars" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Alle biler</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/cars/create" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>legge til</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-route" ></i>
+            <p>
+              Ruter
+              <i class="right fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/locations" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Alle ruter</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/locations/create" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Legge til</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-question" ></i>
+            <p>
+              Skjema adm
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/fields" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Alle felt</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/fields/create" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Legge til</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-file-pdf" ></i>
+            <p>
+              Pdfs
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/pdfs" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Daglig PDF</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/archieve" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Arkiv</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fa fa-users nav-icon" ></i>
+            <p>
+              Brukere
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/users" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Alle Brukere</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/users/create" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Legge til</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fa fa-location-arrow nav-icon" ></i>
+            <p>
+              Soner
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/zones" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Alle rute</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/zones/new" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Legge til</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fa fa-key nav-icon" ></i>
+            <p>
+              IMEIS
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/imeis" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Alle IMEIS</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/imeis/create" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Legge til</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fa fa-warning nav-icon" ></i>
+            <p>
+              P-Automat kategorier
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/issues/categories" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Alle kategorier</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/issues/categories/create" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Opprett kategorier</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fa fa-server nav-icon" ></i>
+            <p>
+              P-Automat
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/machines" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Alle P-Automater</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/machines/create" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Legge til</p>
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a href="/issues/notifications" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Klage</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/reports" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Rapporter PDF</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a href="#" class="nav-link">
+            <i class="fa fa-map-marked-alt nav-icon" ></i>
+            <p>
+              Kart
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="/maps" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Alle Kart</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="/maps/create" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Legge til</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a href="/postals" class="nav-link">
+            <i class="fa fa-envelope nav-icon" ></i>
+            <p>
+              Send per post
+            </p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/scans" class="nav-link">
+            <i class="fa fa-close nav-icon" ></i>
+            <p>
+              Makulering
+            </p>
+          </a>
+        </li>
+
+        <li class="nav-item">
+          <a href="/notifications" class="nav-link">
+            <i class="fa fa-bell nav-icon" ></i>
+            <p>
+              Send varsler
+            </p>
+          </a>
+        </li>
+
+        <li class="nav-header">Innstillinger</li>
+        <li class="nav-item">
+          <a href="/settings" class="nav-link">
+              <i class="nav-icon fa fa-cog"></i>
+              <p>
+                Innstillinger
+              </p>
+            </a>
+      </li>
+
+      <li class="nav-header">Tillatelser</li>
+
+      <li class="nav-item">
+        <a href="/managers" class="nav-link">
+          <i class="fa fa-users-cog nav-icon"></i>
+          <p>Ledere</p>
+        </a>
+      </li>
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+</aside>

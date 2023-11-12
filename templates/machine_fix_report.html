@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            background-color: #eee;
+        }
+
+        .reports {
+            width: 100%; /* Set table width to 90% of available width */
+            border-collapse: collapse;
+            border: 2px solid;
+            height: 400px; /* Set table height to 300px */
+        }
+        .reports th, td {
+            border: 2px solid;
+            padding: 20px;
+            font-size: 20px;
+            text-align: left;
+            background-color: #f2f2f2;
+        }
+        .reports td[colspan="2"] {
+            text-align: center;
+        }
+        .reports th {
+            background-color: #f2f2f2;
+        }
+        
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            margin: 5px 0;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header h3 {
+            margin: 0;
+        }
+        .logo {
+            width: 80px;
+            height: 80px;
+        }
+        .content {
+            flex-grow: 1;
+            display: flex;
+            margin: 20px;
+        }
+        .half {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            align-items: center;
+            margin-right: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .table-container {
+            width: 95%;
+            margin: 20px auto;
+        }
+        .last {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+       
+        .logo-report {
+            width: auto;
+            height: 120px;
+        }
+
+/* Set the other image to take the remaining height */
+.last .report-image {
+    max-width: 95%;
+    height: calc(100% - 140px); /* Subtract the logo height and some margin/padding */
+    margin-bottom: 20px;
+}
+    </style>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img class="logo" src="https://nordic.bilsjekk.in/images/assets/bil.png" alt="Muesem">
+        <h3>P-Automat report
+        </h3>
+        <div></div>
+    </div>
+    <div class="content">
+        <div class="half">
+            <div class="table-container">
+                <h2>Kundeinformasjon</h2>
+                <br>
+                <table class="reports">
+                    <colgroup>
+                        <col style="width: auto;">
+                        <col style="width: auto;">
+                        <col style="width: 100%;">
+                    </colgroup>
+                    <tr>
+                        <td colspan="2">Notater</td>
+                        <td>{{clientNotes}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Rute</td>
+                        <td>{{zone}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Adressen</td>
+                        <td>{{zoneLocation}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Skilt nr</td>
+                        <td>{{boardNumber}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Seriell</td>
+                        <td>{{serial}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Dato</td>
+                        <td>{{ date }}</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="table-container">
+                <h2>Brukerinformasjon</h2>
+                <br>
+                <table class="reports">
+                    <colgroup>
+                        <col style="width: auto;">
+                        <col style="width: auto;">
+                        <col style="width: 100%;">
+                    </colgroup>
+                    <tr>
+                        <td colspan="2">Navn</td>
+                        <td>{{name}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Pnid</td>
+                        <td>{{pnid}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Detaljer</td>
+                        <td>{{details}}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Notater</td>
+                        <td>{{ notes }}</td>
+                    </tr>
+        
+                    <tr>
+                        <td colspan="2">Dato</td>
+                        <td>{{ date }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="last">
+            <img src="https://nordic.bilsjekk.in/images/gensolv.png" class="logo-report" alt="Muesem" width="120px" height="120px">
+            <img src="{{ image }}" alt="{{ image }}" class="report-image">
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+

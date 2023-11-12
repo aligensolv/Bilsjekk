@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rediger gruppe</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<%- include('../components/navbar') %>
+<div class="mt-4"></div>
+
+<div class="container">
+    <form id="updateGroupForm">
+        <div class="form-group">
+            <label for="name">Navn</label>
+            <input type="text" class="form-control" id="name" name="name" value="<%= group.name %>" required>
+        </div>
+        <div class="form-group">
+            <label for="notice">Merke</label>
+            <input type="text" class="form-control" id="notice" name="notice" value="<%= group.notice %>" required>
+        </div>
+        <div class="form-group">
+            <label for="text">Tekst</label>
+            <input type="text" class="form-control" id="text" name="text" value="<%= group.text %>" required>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="updateGroup()">Oppdatere</button>
+    </form>
+    <div id="successAlert" class="alert alert-success mt-3" style="display: none;">
+        Gruppedetaljene er oppdatert.
+    </div>
+    <div id="failureAlert" class="alert alert-danger mt-3" style="display: none;">
+        Kunne ikke oppdatere gruppedetaljene. Vær så snill, prøv på nytt.
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="successModalLabel">Suksess</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+              Endringene er lagret!
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Error Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="errorModalLabel">Feil</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+              Noe gikk galt. Vennligst prøv igjen senere.
+            </div>
+        </div>
+    </div>
+  </div>
+
+
+<!-- Add Bootstrap JS and Popper.js scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    async function updateGroup() {
+        try{
+            const groupId = '<%= group._id %>';
+
+let name = document.querySelector('#name')
+let notice = document.querySelector('#notice')
+let text = document.querySelector('#text')
+
+
+let response = await fetch(`/admin/api/groups/${groupId}`, {
+    method: 'PUT',
+    headers:{
+      'Content-Type':'application/json; charset=utf-8'
+    },
+    body: JSON.stringify({
+        name: name.value,
+        notice: notice.value,
+        text: text.value
+    })
+})
+
+if (response.status == 200) {
+    $('#successModal').modal('show');
+    setTimeout(() =>{
+            $('#successModal').modal('hide');
+          },2000)
+} else {
+    $('#errorModal').modal('show');
+    setTimeout(() =>{
+            $('#errorModal').modal('hide');
+          },2000)
+}
+        }catch(error){
+            $('#errorModal').modal('show');
+            setTimeout(() =>{
+                    $('#errorModal').modal('hide');
+                  },2000)
+        }
+    }
+</script>
+</body>
+</html>

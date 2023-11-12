@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashbord</title>
+        <%- include('../components/headers') %>
+    </head>
+    <body>
+        <div class="wrapper">
+            <%- include('../components/navbar') %>
+            <%- include('../components/manager_sidebar',{ permissions: permissions }) %>
+            <div class="content-wrapper">
+                <div class="content">
+                    
+                </div>
+            </div>
+
+            <%- include('../components/footer') %>
+        </div>
+
+        <%- include('../components/scripts') %>
+    </body>
+</html>

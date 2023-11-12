@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billiste</title>
+
+    <%- include('../components/headers') %>
+
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Theme style -->
+
+  <style>
+    thead input {
+        width: 100%;
+    }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini">
+
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+        <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %> 
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2"><!-- /.col -->
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item active">Biler</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center mb-2 container-fluid">
+                <a href="/cars/create" class="btn btn-info btn-sm mr-1">
+                    <i class="fa fa-plus"></i>
+                    <span>Legge til</span>
+                </a>
+                <button data-toggle="modal" data-target="#confirmAllDeleteModal" class="btn btn-danger btn-sm">
+                    <i class="fa fa-trash"></i>
+                    <span>Slette alle</span>
+                </button>
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">  
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Bildata
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                              <table id="example1" class="table table-bordered table-striped text-center">
+                                <thead>
+                                <tr>
+                                    <th>Regnr.</th>
+                                    <th>Tjenstebilnr.</th>
+                                    <th>Kilometers.</th>
+                                    <th>Kilometer brukt.</th>
+                                    <th>Qr-Kode.</th>
+                                    <th>Handlinger</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (cars.length > 0) { %>
+                                        <% cars.forEach(car => { %>
+                                            <tr>
+                                                <td><%= car.boardNumber ?? '-' %></td>
+                                                <td><%= car.privateNumber ?? '-' %></td>
+                                                <td><%= car.kilometers ?? '-' %></td>
+                                                <td><%= car.currentKilometers ?? '-' %></td>
+                                                <td>
+                                                    <a href="cars/<%= car._id %>/qrcode">
+                                                        <i class="fas fa-qrcode fa-2x"></i>
+                                                    </a>
+                                                </td>
+                                                <td class="controls">
+                                                    <a href="/cars/<%= car._id %>/update" class="btn btn-sm btn-info mr-1">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button class="btn btn-sm btn-warning mr-1" onclick="resetCarService('<%= car._id %>')">
+                                                        <i class="fas fa-recycle"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal<%= car._id %>">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <!-- Delete Modal -->
+                                            <div class="modal fade" id="deleteModal<%= car._id %>" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="deleteModalLabel">Slett bekreftelse</h5>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Er du sikker på at du vil slette <%= car.boardNumber %>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbrytt</button>
+                                                            <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteCar('<%= car._id %>')">Slett</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="6" class="text-center">Ingen biler.</td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                              </table>
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+    <div class="modal fade" id="confirmAllDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmAllDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmAllDeleteModalLabel">Slett alle biler bekreftelse</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Vil du slette alle biler?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteAllCars()" id="confirmAllDeleteBtn">Slett</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<%- include('../components/scripts') %>
+
+<!-- DataTables  & Plugins -->
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/plugins/jszip/jszip.min.js"></script>
+<script src="/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+    $(function () {
+
+
+      $("#example1").DataTable({
+        "responsive": true, "lengthChange": true, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "language": {
+        "emptyTable": "Ingen data tilgjengelig",
+        "infoEmpty": "Ingen data tilgjengelig Info",
+        "zeroRecords": "Det er ingen samsvarende data"
+        } ,
+      
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+  </script>
+<script>
+    var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+    async function resetCarService(carId){
+        let response = await fetch(`/admin/api/cars/${carId}/reset`)
+        if(response.status == 200){
+            Toast.fire({
+                    icon: 'success',
+                    title: "Bilkilometer ble tilbakestilt"
+                })
+            setTimeout(() =>{
+                location.reload()
+            },3000)
+        }else{
+            Toast.fire({
+                icon: 'error',
+                title: (await response.json()).toString()
+            })
+        }
+    }
+
+    function deleteCar(carId) {
+        fetch(`/admin/api/cars/${carId}`, {
+            method: 'DELETE',
+        })
+            .then(async response => {
+                if (response.ok) {
+                    Toast.fire({
+                    icon: 'success',
+                    title: "Bil ble slettet"
+                })
+                    setTimeout(() => {
+                        window.location.reload(); // Refresh the page to reflect the changes
+                    }, 3000);
+                } else {
+                    Toast.fire({
+                    icon: 'error',
+                    title: (await response.json()).toString()
+                })
+                }
+            })  
+            .catch(error => {
+                Toast.fire({
+                    icon: 'error',
+                    title: error.message
+                })
+            });
+    }
+
+
+    function deleteAllCars() {
+        fetch(`/admin/api/cars`, {
+            method: 'DELETE',
+        })
+            .then(async response => {
+                if (response.ok) {
+                    Toast.fire({
+                    icon: 'success',
+                    title: "Alle biler ble slettet"
+                })
+                    setTimeout(() => {
+                        window.location.reload(); // Refresh the page to reflect the changes
+                    }, 3000);
+                } else {
+                    Toast.fire({
+                    icon: 'error',
+                    title: (await response.json()).toString()
+                })
+                }
+            })
+            .catch(error => {
+                Toast.fire({
+                    icon: 'error',
+                    title: error.message
+                })
+            });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,1391 @@
+
+<!doctype html>
+<html lang="en" dir="">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Drift-Report admin</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/images/gensolv.png" />
+    <link rel="stylesheet" href="/assets/css/backend-plugin.min.css?v=2.0.0">
+    <link rel="stylesheet" href="/assets/css/backend.css?v=2.0.0">
+    <link rel="stylesheet" href="/assets/vendor/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/assets/vendor/line-awesome/dist/line-awesome/css/line-awesome.min.css">
+    <link rel="stylesheet" href="/assets/vendor/remixicon/fonts/remixicon.css">
+    <link rel="stylesheet" href="/assets/vendor/@icon/dripicons/dripicons.css">
+    
+    <link rel='stylesheet' href='/assets/vendor/fullcalendar/core/main.css' />
+    <link rel='stylesheet' href='/assets/vendor/fullcalendar/daygrid/main.css' />
+    <link rel='stylesheet' href='/assets/vendor/fullcalendar/timegrid/main.css' />
+    <link rel='stylesheet' href='/assets/vendor/fullcalendar/list/main.css' />
+    <link rel="stylesheet" href="/assets/vendor/mapbox/mapbox-gl.css"></head>
+
+    <link rel="stylesheet" href="/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+
+    <link rel='stylesheet' href='../assets/vendor/fullcalendar/core/main.css' />
+    <link rel='stylesheet' href='../assets/vendor/fullcalendar/daygrid/main.css' />
+    <link rel='stylesheet' href='../assets/vendor/fullcalendar/timegrid/main.css' />
+    <link rel='stylesheet' href='../assets/vendor/fullcalendar/list/main.css' />
+    <link rel="stylesheet" href="/plugins/daterangepicker/daterangepicker.css">
+
+
+
+    <style>
+        #cmap {
+            width: 100%;
+            height: 450px;
+        }
+        
+        #chartdiv {
+  width: 100%;
+  height: 500px;
+}
+    </style>
+
+<body>
+    <!-- loader Start -->
+    <div id="loading">
+            <div id="loading-center">
+            </div>
+    </div>
+    <!-- loader END -->
+    <!-- Wrapper Start -->
+    <div class="wrapper">
+        <!-- Fixed Side Menu -->
+        <div class="dashboard3-fixed-menu">
+            <div class="dashboard3-info bg-primary p-2 rounded">
+                <a href="#payment" class="collapsed" data-toggle="collapse" aria-expanded="false">
+                    <i class="ri-list-check"></i>
+                </a>
+                <ul id="payment" class="iq-submenu collapse show list-inline m-0 p-0 mt-2">
+                    <li>
+                        <a href="/" data-toggle="tooltip" data-placement="right" title="Hjem"><i
+                                class="las la-home iq-arrow-left"></i></a>
+                    </li>
+            
+                    <li>
+                        <a href="/admin/api/logout" data-toggle="tooltip" data-placement="right" title="Logg ut" style="color: red;"><i
+                                class="las la-sign-out-alt"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+           <div class="content-wrapper">
+    <div class="container mt-2">
+        <div class="row">
+            <div class="col-lg-12 mb-3">
+                <div class="d-flex align-items-center justify-content-between welcome-content">
+                    <div class="navbar-breadcrumb">
+                        <h4 class="mb-1">Drift Klage Report</h4>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8 mb-2 d-flex align-items-center">
+                <div class="btn btn-sm btn-primary mr-1" onclick="initalizeGeneralNumbers(6); initializeAverages(6); initializeLeaderboard(6)">Alle</div>
+                <div class="btn btn-sm btn-primary mr-1" onclick="initalizeGeneralNumbers(1); initializeAverages(1); initializeLeaderboard(1)">Dag</div>
+                <div class="btn btn-sm btn-primary mr-1" onclick="initalizeGeneralNumbers(2); initializeAverages(2); initializeLeaderboard(2)">2D</div>
+                <div class="btn btn-sm btn-primary mr-1" onclick="initalizeGeneralNumbers(3); initializeAverages(3); initializeLeaderboard(3)">Uke</div>
+                <div class="btn btn-sm btn-primary mr-1" onclick="initalizeGeneralNumbers(4); initializeAverages(4); initializeLeaderboard(4)">Månd</div>
+                
+                <div class="date" id="reservationdate" data-target-input="nearest">
+                    <div class="input-group-append" data-target="#reservationdate" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4"></div>
+            
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-body">
+                                <div class="top-block-one d-flex align-items-center justify-content-between">
+                                    <div class="icon iq-icon-box-2 mr-2 rtl-ml-2 rtl-mr-0 rounded">
+                                        <img src="/images/issues.png" alt="" srcset="" width="100%" height="100%">
+                                    </div>
+                                    <span class="text-primary"> <i class="ri-arrow-up-fill mr-1 fa-2x"></i></span>
+
+                                </div>
+                                <div class="mt-4 ">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3 id="ti-holder">-</h3>
+                                        <a href="/issues" class="btn btn-sm btn-info">
+                                            Check
+                                        </a>
+                                    </div>
+                                    <span class="mb-0">Alle klage</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card card-block card-stretch card-height bg-primary">
+                            <div class="card-body">
+                                <div class="top-block-one d-flex align-items-center justify-content-between">
+                                    <div class="icon iq-icon-box-2 mr-2 rtl-ml-2 rtl-mr-0 rounded">
+                                        <img src="/images/completed.png" alt="" srcset="" width="100%" height="100%">
+                                    </div>
+                                    <span class="text-white"><i class="ri-arrow-down-line mr-1 fa-2x"></i></span>
+
+                                </div>
+
+                                <div class="mt-4 ">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3 id="ci-holder">-</h3>
+                                        <a href="/issues" class="btn btn-sm btn-info">
+                                            Check
+                                        </a>
+                                    </div>                                    <span class="mb-0  text-white">Løst klage</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-body">
+                                <div class="top-block-one d-flex align-items-center justify-content-between">
+                                    <div class="icon iq-icon-box-2 mr-2 rtl-ml-2 rtl-mr-0 rounded">
+                                        <img src="/images/waiting.png" alt="" srcset="" width="100%" height="100%">
+                                    </div>
+                                    <span class="text-primary"> <i class="ri-arrow-up-fill mr-1 fa-2x"></i></span>
+
+                                </div>
+
+                                <div class="mt-4 ">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3 id="wi-holder">-</h3>
+                                        <a href="/issues" class="btn btn-sm btn-info">
+                                            Check
+                                        </a>
+                                    </div>                                    <span class="mb-0">Klage på vent</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-body">
+                                <div class="top-block-one d-flex align-items-center justify-content-between">
+                                    <div class="icon iq-icon-box-2 mr-2 rtl-ml-2 rtl-mr-0 rounded">
+                                        <img src="/images/waiting.png" alt="" srcset="" width="100%" height="100%">
+                                    </div>
+                                    <span class="text-primary"> <i class="ri-arrow-up-fill mr-1 fa-2x"></i></span>
+
+                                </div>
+
+                                <div class="mt-4 ">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3 id="active-holder">-</h3>
+                                        <a href="/machines" class="btn btn-sm btn-info">
+                                            Check
+                                        </a>
+                                    </div>                                    <span class="mb-0">Active</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-body">
+                                <div class="top-block-one d-flex align-items-center justify-content-between">
+                                    <div class="icon iq-icon-box-2 mr-2 rtl-ml-2 rtl-mr-0 rounded">
+                                        <img src="/images/not_solved.png" alt="" srcset="" width="100%" height="100%">
+                                    </div>
+                                    <span class="text-white"><i class="ri-arrow-down-line mr-1 fa-2x"></i></span>
+
+                                </div>
+
+                                <div class="mt-4 ">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3 id="ici-holder">-</h3>
+                                        <a href="/issues" class="btn btn-sm btn-info">
+                                            Check
+                                        </a>
+                                    </div>                                    <span class="mb-0">Uløst klage</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-body">
+                                <div class="top-block-one d-flex align-items-center justify-content-between">
+                                    <div class="icon iq-icon-box-2 mr-2 rtl-ml-2 rtl-mr-0 rounded">
+                                        <img src="/images/from_driver.png" alt="" srcset="" width="100%" height="100%">
+                                    </div>
+                                    <span class="text-primary"> <i class="ri-arrow-up-fill mr-1 fa-2x"></i></span>
+
+                                </div>
+
+                                <div class="mt-4 ">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3 id="ibd-holder">-</h3>
+                                        <a href="/issues" class="btn btn-sm btn-info">
+                                            Check
+                                        </a>
+                                    </div>                                    <span class="mb-0">Klage ab betjent</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-body">
+                                <div class="top-block-one d-flex align-items-center justify-content-between">
+                                    <div class="icon iq-icon-box-2 mr-2 rtl-ml-2 rtl-mr-0 rounded">
+                                        <img src="/images/by_driver.png" alt="" srcset="" width="100%" height="100%">
+                                    </div>
+                                    <span class="text-white"><i class="ri-arrow-down-line mr-1 fa-2x"></i></span>
+
+                                 
+                                </div>
+
+                                <div class="mt-4 ">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3 id="isd-holder">-</h3>
+                                        <a href="/issues" class="btn btn-sm btn-info">
+                                            Check
+                                        </a>
+                                    </div>                                    <span class="mb-0">Løst klage av betjent</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-sm-6">
+                        <div class="card card-block card-stretch card-height">
+                            <div class="card-body">
+                                <div class="top-block-one d-flex align-items-center justify-content-between">
+                                    <div class="icon iq-icon-box-2 mr-2 rtl-ml-2 rtl-mr-0 rounded">
+                                        <img src="/images/by_driver.png" alt="" srcset="" width="100%" height="100%">
+                                    </div>
+                                    <span class="text-white"><i class="ri-arrow-down-line mr-1 fa-2x"></i></span>
+
+                                 
+                                </div>
+
+                                <div class="mt-4 ">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h3 id="offline-holder">-</h3>
+                                        <a href="/machines" class="btn btn-sm btn-info">
+                                            Check
+                                        </a>
+                                    </div>                                    <span class="mb-0">Offline</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+
+
+            <div class="col-lg-8 col-md-6">
+                <div class="card card-block card-stretch card-height">
+                    <div class="card-header border-none">
+                        <div class="header-title">
+                            <h4 class="card-title mb-1">Direkte P-Automat status på kart</h4>
+                            <span class="mb-0">Se alle automatene som har fått klage eller ute av drift</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="cmap" class="layout-3-chart-01"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card card-block card-stretch card-height rtl-card">
+                <div class="card-header border-none">
+                    <div class="header-title">
+                        <h4 class="card-title">Rask betjent inngående klage</h4>
+                    </div>
+                </div>
+                    <div class="card-body" id="progress-container">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-lg-4">
+                <div class="card card-block card-stretch card-height">
+                    <div class="card-header border-none">
+                        <div class="header-title">
+                            <h4 class="card-title">Klage kategori</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="layout-3-chart-04">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="card card-block card-stretch card-height">
+                    <div class="card-header border-none">
+                        <div class="header-title">
+                            <h4 class="card-title">Antall og gjentatt klage</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="dual-repeated-chart"></div>
+                    </div>
+                    </div>
+            </div>
+        
+            <div class="col-lg-8">
+                <div class="card card-block card-stretch card-height rtl-card">
+                <div class="card-header border-none">
+                    <div class="header-title">
+                        <h4 class="card-title">Analytics</h4>
+                    </div>
+                </div>
+                    <div class="card-body" id="chartdiv">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6">
+                <div class="card card-block card-stretch card-height">
+                    <div class="card-header border-none">
+                        <div class="header-title">
+                            <h4 class="card-title mb-1">P-automat statistikk</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="layout-3-chart-02"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="card card-block card-stretch card-height ">
+                    <div class="card-header border-none">   
+                        <div class="header-title">
+                            <h4 class="card-title">Nåværende klage og status</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table text-center mb-0 table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>Dato</th>
+                                        <th>pub</th>
+                                        <th>Tasknr</th>
+                                        <th>Rute</th>
+                                        <th>Kategori</th>
+                                        <th>Klage</th>
+                                        <th>Betydning</th>
+                                        <th>Hvor</th>
+                                        <th>Status</th>
+                                        <th>Siden?</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% 
+                                        let importanceLevelJumpTable = {
+                                            1: 'High',
+                                            2: 'Medium',
+                                            3: 'Low',
+                                        }    
+
+                                        let importanceLevelColorJumpTable = {
+                                            1: 'red',
+                                            2: 'gold',
+                                            3: 'green'
+                                        }
+                                        let importanceLevelBGColorJumpTable = {
+                                            1: '#f2e7e7',
+                                            2: '#fef8ed',
+                                            3: '#e6f7f5'
+                                        }
+                                    %>
+                                        <% if (issues.length === 0) { %>
+                                            <tr>
+                                                <td colspan="6">Ingen problemrapporter ennå</td>
+                                            </tr>
+                                        <% } else { %>
+                                            <% issues.forEach(report => { %>
+                                                <tr>
+                                                    <td><%= report.date %></td>
+                                                    <td><%= report.publisher %></td>
+                                                    <td><%= report.serial %></td>
+                                                    <td><%= report.zone %></td>
+                                                    <td><%= report.category %></td>
+                                                    <td><%= report.problem %></td>
+                                                    <td style="color: <%= importanceLevelColorJumpTable[report.importanceLevel] %>; font-size: 16px;">
+                                                    <div class="p-0" style="background-color: <%= importanceLevelBGColorJumpTable[report.importanceLevel] %>">
+                                                        <%= importanceLevelJumpTable[report.importanceLevel] %>
+                                                    </div></td>
+                                                    <td><%= report.zoneLocation %></td>
+                                                    <td><%= report.status %></td>
+                                                    <td date="<%= report.date %>" style="font-size: 14px;">
+                                                        <div date="<%= report.date %>" class="p-0 live-time" style="background-color: <%= importanceLevelBGColorJumpTable[3] %>">
+                                                            -
+                                                        </div>
+                                                    </td>
+                                                
+                                                </tr>
+                            
+                                                <div class="modal fade" id="deleteReportModal<%= report._id %>" tabindex="-1" aria-labelledby="deleteReportModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="deleteReportModalLabel">Slett rapportbekreftelse</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Er du sikker på at du vil slette denne problemrapporten?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                                                                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteReport('<%= report._id %>')" id="confirmDeleteBtn">Slett</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% }); %>
+                                        <% } %>
+                                        </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="card card-block card-stretch card-height rule-box averages-card">
+                    <div class="card-header d-flex justify-content-between border-none">
+                        <div class="header-title">
+                            <h4 class="card-title">Gjennomsnitt</h4>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="averages-container">
+                            <div class="average-item">
+                                <i class="fas fa-chart-line average-icon"></i>
+                                <div class="average-details">
+                                    <p class="average-title">Klage / time</p>
+                                    <h4 id="isha-holder" class="average-value btn btn-sm btn-primary">-</h4>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="average-item">
+                                <i class="fas fa-clock average-icon"></i>
+                                <div class="average-details">
+                                    <p class="average-title">Klage på vent / Hour</p>
+                                    <h4 id="iswhg-holder" class="average-value btn btn-sm btn-primary">-</h4>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="average-item">
+                                <i class="fas fa-exchange-alt average-icon"></i>
+                                <div class="average-details">
+                                    <p class="average-title">Videresende klage / Hour</p>
+                                    <h4 id="idha-holder" class="average-value btn btn-sm btn-primary">-</h4>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="average-item">
+                                <i class="fas fa-comment average-icon"></i>
+                                <div class="average-details">
+                                    <p class="average-title">SMS</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h4 id="sms-holder" class="average-value btn btn-sm btn-primary">-</h4>
+                                        <a href="/reports/sms" class="btn btn-sm btn-info">See All</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-8 col-md-6">
+                <div class="card card-block card-stretch card-height">
+                <div class="card-header border-none">
+                    <div class="header-title">
+                        <h4 class="card-title">Total gjennomsnittstid for å løse klagen</h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="layout-1-chart-06"></div>
+                  
+                    <div class="d-flex align-items-center">
+                        <label class="mr-3">Filter Data</label>
+                        <div>
+                            <div class="date" id="reservationdateF" data-target-input="nearest">
+                                <div class="input-group-append" data-target="#reservationdateF" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+    
+                        </div>
+                      </div>
+                </div>
+                </div>
+            </div>
+       
+            <div class="col-lg-8">
+                <div class="card card-block card-stretch card-height ">
+                    <div class="card-header border-none">   
+                        <div class="header-title d-flex justify-content-between">
+                            <h4 class="card-title">Nylige rapporter</h4>
+                            <a class="btn btn-primary" href="/reports">Vise Alle</a>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table mb-0 table-borderless text-center">
+                                <thead>
+                                    <tr>
+                                        <th>Dato</th>
+                                        <th>Seriell</th>
+                                        <th>Sone</th>
+                                        <th>Rute</th>
+                                        <th>PDF</th>
+                                        <th>Handlinger</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (reports.length === 0) { %>
+                                            <tr>
+                                                <td colspan="6">Ingen problemrapporter ennå</td>
+                                            </tr>
+                                        <% } else { %>
+                                            <% reports.forEach(report => { %>
+                                                <tr>
+                                                    <td><%= report.date %></td>
+                                                    <td><%= report.serial %></td>
+                                                    <td><%= report.zone %></td>
+                                                    <td><%= report.zoneLocation %></td>
+                                                    <td><a href="<%= report.pdf %>" target="_blank">Se PDF</a></td>
+                                                    <td class="d-flex justify-content-center custom-issue-report-controls">
+                                                        <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#deleteReportModal<%= report._id %>">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                            
+                                                <div class="modal fade" id="deleteReportModal<%= report._id %>" tabindex="-1" aria-labelledby="deleteReportModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="deleteReportModalLabel">Slett rapportbekreftelse</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                Er du sikker på at du vil slette denne problemrapporten?
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                                                                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteReport('<%= report._id %>')" id="confirmDeleteBtn">Slett</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <% }); %>
+                                        <% } %>
+                                        </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card card-block card-height overflow-hidden">
+                    <div class="card-header border-none">
+                        <div class="header-title ">
+                            <h4 class="card-title">
+                                Løsere og tid brukt
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div id="leaderboard-container" class="card-body" style="overflow-y: auto; height: 200px;">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        </div>
+    </div>
+    <!-- Wrapper End-->
+
+    
+    
+    
+
+    <!-- Backend Bundle JavaScript -->
+    <script src="/assets/js/backend-bundle.min.js"></script>
+    
+    <!-- Flextree Javascript-->
+    <script src="/assets/js/flex-tree.min.js"></script>
+    <script src="/assets/js/tree.js"></script>
+    
+    <!-- Table Treeview JavaScript -->
+    <script src="/assets/js/table-treeview.js"></script>
+    
+    <!-- Masonary Gallery Javascript -->
+    <script src="/assets/js/masonry.pkgd.min.js"></script>
+    <script src="/assets/js/imagesloaded.pkgd.min.js"></script>
+    
+    <!-- Mapbox Javascript -->
+    <script src="/assets/js/mapbox-gl.js"></script>
+    <script src="/assets/js/mapbox.js"></script>
+    
+    <!-- Fullcalender Javascript -->
+    <script src='/assets/vendor/fullcalendar/core/main.js'></script>
+    <script src='/assets/vendor/fullcalendar/daygrid/main.js'></script>
+    <script src='/assets/vendor/fullcalendar/timegrid/main.js'></script>
+    <script src='/assets/vendor/fullcalendar/list/main.js'></script>
+    
+    <!-- SweetAlert JavaScript -->
+    <script src="/assets/js/sweetalert.js"></script>
+    
+    <!-- Vectoe Map JavaScript -->
+    <script src="/assets/js/vector-map-custom.js"></script>
+    
+    <!-- Chart Custom JavaScript -->
+    <script src="/assets/js/customizer.js"></script>
+    <script src="/assets/js/rtl.js"></script>
+    
+    <!-- Chart Custom JavaScript -->
+    <!-- <script src="/assets/js/chart-custom.js"></script> -->
+    
+    <!-- slider JavaScript -->
+    <script src="/assets/js/slider.js"></script>
+    
+    <!-- app JavaScript -->
+    <script src="/assets/js/app.js"></script>
+
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+
+
+        <!-- Fullcalender Javascript -->
+        <script src='../assets/vendor/fullcalendar/core/main.js'></script>
+        <script src='../assets/vendor/fullcalendar/daygrid/main.js'></script>
+        <script src='../assets/vendor/fullcalendar/timegrid/main.js'></script>
+        <script src='../assets/vendor/fullcalendar/list/main.js'></script>
+        <script src="/plugins/daterangepicker/daterangepicker.js"></script>
+
+        <script src="//cdn.amcharts.com/lib/4/plugins/overlapBuster.js"></script> 
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB_RMmoc5iVAGRDfxi8WLjQc27_QocN-eI&libraries=places"></script>
+        <script src="/geo/geoxml3.js"></script>
+        <script src="/geo/ZipFile.complete.js"></script>
+
+        <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+
+
+
+
+    <script>
+        "use strict";
+        if (jQuery('#layout-3-chart-02').length) {
+  Highcharts.chart('layout-3-chart-02', {
+    chart: {
+      plotBackgroundColor: null,
+      plotBorderWidth: null,
+      plotShadow: false,
+      height: 400,
+      type: 'pie'
+    },
+    title: {
+      text: ''
+    },
+    tooltip: {
+      pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    accessibility: {
+      point: {
+        valueSuffix: '%'
+      }
+    },
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        dataLabels: {
+          enabled: false, // Set this to true to show data labels
+        },
+        showInLegend: true
+      }
+    },
+    colors: ["green", "gold", "red"],
+    series: [
+      {
+        name: 'Machines',
+        colorByPoint: true,
+        data: [
+          {
+            name: 'Working',
+            y: <%- activeMachines %>,
+          },
+          {
+            name: 'Waiting',
+            y: <%- waitingMachines %>
+          },
+          {
+            name: 'Out of service',
+            y: <%- inActiveMachines %>
+          }
+        ]
+      }
+    ],
+    legend: {
+      labelFormatter: function () {
+        // Display both the legend name and the real value
+        return this.name + ': ' + this.y;
+      }
+    }
+  });
+} else {
+  console.log('not found');
+}
+
+
+
+
+// Sample data (you can replace this with your actual data)
+var initialData = <%- parsedGroupedDates %>
+
+function updateChart(data) {
+  var options = {
+    series: [
+      {
+        name: 'Total Average',
+        data: data.map(item => item.value)
+      },
+      
+    ],
+    chart: {
+      type: 'bar',
+      height: 310
+    },
+    xaxis: {
+      type: 'datetime',
+      categories: data.map(item => moment(item.date).format('YYYY-MM-DD'))
+    },
+
+    plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '30%',
+          },
+        },
+
+        dataLabels: {
+        enabled: false // Hide default values on bars
+    },
+
+    tooltip: {
+        y: {
+            formatter: function (val) {
+                let average = val.toString()
+                let avgParts = average.split('.')
+                avgParts[0] = avgParts[0] + 'H'
+                avgParts[1] = ((+avgParts[1] / 100) * 60).toFixed(0) + 'M'
+
+                let joined = avgParts.join(' ')
+                return joined
+            }
+        }
+    },
+    // ... Other chart options ...
+  };
+  document.getElementById('layout-1-chart-06').innerHTML = ''
+  var chart = new ApexCharts(document.querySelector("#layout-1-chart-06"), options);
+  chart.render();
+}
+
+
+// Initial chart rendering
+updateChart(initialData);
+
+let liveTimes = document.querySelectorAll('.live-time')
+
+    if(liveTimes.length > 0){
+        setInterval(() => {
+    for (let live in liveTimes) {
+        let startDate = moment(liveTimes.item(live).getAttribute('date'));
+        let endDate = moment();
+        let diff = moment.duration(endDate.diff(startDate));
+        let days = diff.days();
+        let hours = diff.hours();
+        let minutes = diff.minutes();
+        let seconds = diff.seconds();
+        let durationText = days > 0 ? `${days}D ` : '';
+        durationText += `${hours}H ${minutes}M ${seconds}S`;
+        liveTimes.item(live).textContent = durationText;
+    }
+}, 1000);
+    }
+
+    async function initalizeGeneralNumbers(id,lowerbound,upperbound) {
+        let ci = document.getElementById('ci-holder')
+        let wi = document.getElementById('wi-holder')
+        let ti = document.getElementById('ti-holder')
+        let ici = document.getElementById('ici-holder')
+        let ibd = document.getElementById('ibd-holder')
+        let isd = document.getElementById('isd-holder')
+
+        let activeHolder = document.getElementById('active-holder')
+        let offlineHolder = document.getElementById('offline-holder')
+
+        let generalResponse = await fetch(`/api/reports/general/${id}`,{
+            headers:{
+                lowerbound:lowerbound,
+                upperbound: upperbound
+            }
+        })
+        let json = await generalResponse.json()
+
+        ci.textContent = json['completedIssues']
+        wi.textContent = json['waitingIssues']
+        ti.textContent = json['totalIssues']
+        ici.textContent = json['inCompletedIssues']
+        ibd.textContent = json['issuePublishedByDriver']
+        isd.textContent = json['issueSolvedByDriver']
+        activeHolder.textContent = json['totalActive']
+        offlineHolder.textContent = json['totalOffline']
+    }
+
+
+    async function initializeAverages(id,lowerbound,upperbound){
+        let isha = document.getElementById('isha-holder')
+        let iswhg = document.getElementById('iswhg-holder')
+        let idha = document.getElementById('idha-holder')
+
+        let averagesResponse = await fetch(`/api/reports/averages/${id}`,{
+            headers:{
+                lowerbound: lowerbound,
+                upperbound: upperbound
+            }
+        })
+        let json = await averagesResponse.json()
+
+        isha.textContent = json['issueSolvedHoursAverage']
+        iswhg.textContent = json['issueSolvedWaitingHoursAverage']
+        idha.textContent = json['issueRedirectHoursAverage']
+    }
+
+    async function initializeLeaderboard(id,lowerbound,upperbound) {
+
+        let leaderboardContainer = document.getElementById('leaderboard-container')
+        leaderboardContainer.innerHTML = ''
+        let leaderboardResponse = await fetch(`/api/reports/leaderboard/${id}`,{
+            headers:{
+                lowerbound: lowerbound,
+                upperbound: upperbound
+            }
+        })
+        let holderSortableArray = await leaderboardResponse.json()
+
+        for (let holder of holderSortableArray) {
+
+            let leaderboardItem = document.createElement('div')
+            leaderboardItem.className = 'd-flex justify-content-between align-items-center'
+
+            let identifierHolder = document.createElement('p')
+            let valueHolder = document.createElement('p')
+
+            identifierHolder.textContent = holder.identifier
+            valueHolder.textContent = holder.value
+            valueHolder.className = 'btn btn-primary btn-sm'
+
+
+            leaderboardItem.appendChild(identifierHolder)
+            leaderboardItem.appendChild(valueHolder)
+
+            leaderboardContainer.appendChild(leaderboardItem)
+        }
+    }
+
+
+    async function initializeTotalSMS(){
+        let smsHolder = document.getElementById('sms-holder')
+        let response = await fetch('/api/reports/sms/total')
+        let total = await response.json()
+
+        console.log(total);
+        smsHolder.textContent = total + ' Messages'
+    }
+
+
+
+     //Date picker
+     $('#reservationdate').daterangepicker({ sideBySide: true, debug: true }).on('apply.daterangepicker', async function (e, picker) {
+    var startDate = picker.startDate.format('YYYY-MM-DD');
+    var endDate = picker.endDate.format('YYYY-MM-DD');
+
+    await initalizeGeneralNumbers(5,startDate,endDate)
+    await initializeLeaderboard(5,startDate,endDate)
+    await initializeAverages(5,startDate,endDate)
+
+
+})
+     //Date picker
+     $('#reservationdateF').daterangepicker({ sideBySide: true, debug: true }).on('apply.daterangepicker', async function (e, picker) {
+    var startDate = picker.startDate.format('YYYY-MM-DD');
+    var endDate = picker.endDate.format('YYYY-MM-DD');
+
+    // Sample data filtering logic based on date range
+    var filteredData = initialData.filter(item => {
+        var currentDate = moment(moment(item.date).format('YYYY-MM-DD'));
+        return currentDate.isBetween(startDate, endDate, null, "[]");
+    });
+    
+    updateChart(filteredData);
+
+})
+
+    document.addEventListener('DOMContentLoaded', async (event) =>{
+        await initalizeGeneralNumbers(6)
+        await initializeAverages(6)
+        await initializeLeaderboard(6)
+        await initializeTotalSMS()
+    })
+
+    if (jQuery("#dual-repeated-chart").length) {
+
+
+        let dualData = <%- issuesGroupedIntoMonths %>;
+        var options = {
+          series: [{
+          name: 'Total Issues',
+          data: Object.values(dualData).map(v => v.totalIssues)
+        }, {
+          name: 'Total Repeated',
+          data: Object.values(dualData).map(v => v.totalRepeated)
+        }],
+          chart: {
+          type: 'bar',
+          height: 310
+        },
+    colors: ['#05bbc9','#876cfe'],
+
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '10%',
+          },
+        },
+        dataLabels: {
+          enabled: false
+        },
+        stroke: {
+          show: true,
+          width: 2,
+          colors: ['transparent']
+        },
+        xaxis: {
+          categories: Object.keys(dualData),
+        },
+      yaxis: {
+        show: true,
+        labels: {
+          minWidth: 20,
+          maxWidth: 20
+        }
+      },
+        fill: {
+          opacity: 1
+        },
+        tooltip: {
+            custom: function({ series,seriesIndex, dataPointIndex, w }){
+                if(seriesIndex == 1){
+                    const xValue = w.globals.labels[dataPointIndex]; // Access x-axis value
+                    return `
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title">
+                                    Locations Repeated
+                                </div>      
+
+                                <div class="card-body">
+                                    <h5>Total: ${dualData[xValue].totalRepeated}</h5>
+                                    <ul>
+                                        ${Object.values(dualData[xValue].zoneLocationSet).map(v => {
+                                        if(v.repeat != undefined)
+                                        return `<li><span class="zone-location">${v.zoneLocation}</span><span class="repeat">  ${v.repeat}</span></li>`;
+                                    }).join('\n')}
+                                    </ul>
+                                </div>
+                            </div> 
+                            
+                            <div class="card-body"></div>
+                        </div>
+                    `
+                }else{
+                    return series[seriesIndex][dataPointIndex] + " issues"
+                }
+            }
+          }
+        }
+        };
+
+    var chart = new ApexCharts(document.querySelector("#dual-repeated-chart"), options);
+        chart.render();
+
+let holderSortableArray = <%- holderSortableArray %>;
+let progressContainer = document.getElementById('progress-container');
+for(let value of holderSortableArray){
+    /*
+        <div class="iq-details mt-4">
+                        <h5 class="title">Favorite</h5>
+                        <div class="iq-progress-bar bg-orange-light mt-2">
+                            <span class="bg-orange iq-progress progress-1" data-percent="92" >
+                            <span class="progress-text-one bg-orange">92%</span>
+                            </span>
+                        </div>
+                    </div>
+    
+    */
+
+    let container = document.createElement('div')
+    container.className = 'iq-details'
+
+    let title = document.createElement('h5')
+    title.className = 'title mb-4'
+    title.textContent = value.identifier
+
+    let progressIqContainer = document.createElement('div')
+    progressIqContainer.className = 'iq-progress-bar bg-orange-light mt-2'
+
+    let dataPercent = document.createElement('span')
+    dataPercent.className = 'bg-orange iq-progress progress-1'
+    dataPercent.setAttribute('data-percent', value.value > 100 ? '100' : value.value.toString())
+    
+    let dataPercentText = document.createElement('span')
+    dataPercentText.className = 'progress-text-one bg-orange'
+    dataPercentText.textContent = value.value + '%'
+
+    container.appendChild(title)
+    dataPercent.appendChild(dataPercentText)
+
+    progressIqContainer.appendChild(dataPercent)
+
+    container.appendChild(progressIqContainer)
+    progressContainer.appendChild(container)
+}
+
+if (jQuery("#layout-3-chart-04").length) {
+    let sections = <%- issueGroupedIntoImportance %>;
+
+
+    var options = {
+      series: [100, ...sections],
+      chart: {
+        height: 350,
+        type: 'radialBar',
+      },
+      plotOptions: {
+        radialBar: {
+          dataLabels: {
+            name: {
+              fontSize: '22px',
+            },
+            value: {
+              fontSize: '16px',
+            },
+            total: {
+              show: true,
+              label: 'Total',
+              formatter: function (w) {
+                let totalIssues = <%- issueGroupedIntoImportanceTotalIssues %>;
+                // By default this function returns the average of all series. The below is just an example to show the use of custom formatter function
+                return totalIssues
+              }
+            }
+          }
+        }
+      },
+      colors: ['#876cfe', '#4788ff', '#ffca44', '#fe721c'],
+      labels: ['Issues', 'Low', 'Medium', 'High'],
+    };
+
+    var chart = new ApexCharts(document.querySelector("#layout-3-chart-04"), options);
+    chart.render();
+    const body = document.querySelector('body')
+    if (body.classList.contains('dark')) {
+      apexChartUpdate(chart, {
+        dark: true
+      })
+    }
+
+    document.addEventListener('ChangeColorMode', function (e) {
+      apexChartUpdate(chart, e.detail)
+    })
+
+  }
+
+
+
+   var bounds = null;
+   var map = null
+  async function initialize() {
+    var myOptions = {
+    zoom: 10,
+    center: new google.maps.LatLng(42,-80),
+    mapTypeControl: true,
+    mapTypeControlOptions: {style: google.maps.MapTypeControlStyle.DROPDOWN_MENU},
+    navigationControl: true,
+    mapTypeId: google.maps.MapTypeId.TERRAIN
+  }
+  map = new google.maps.Map(document.getElementById("cmap"),
+                            myOptions);
+
+  bounds = new google.maps.LatLngBounds();
+
+  var donut = new google.maps.Polygon({
+             paths: [[
+                        new google.maps.LatLng(-87, 120), 
+                        new google.maps.LatLng(-87, -87), 
+                        new google.maps.LatLng(-87, 0)],
+            ],
+             strokeColor: "#000000",
+             strokeOpacity: 0.6,
+             strokeWeight: 2,
+             fillColor: "#333333",
+             fillOpacity: 1
+ });
+ donut.setMap(map);
+
+ map.fitBounds(bounds);
+
+    
+
+    // const {KmlLayer} = await google.maps.importLibrary("maps")
+    // KmlLayer.setUrl('http://localhost:9090/kmz/gadm41_NOR_2.kmz')
+    // kmzLayer.setMap(map);
+    var geocoder = new google.maps.Geocoder();
+    var geoXml = new geoXML3.parser({
+        map: map,
+        zoom: false, 
+        singleInfoWindow: true, 
+        suppressDirections: true,
+    });
+
+    geoXml.parse("https://nordic.bilsjekk.in/kmz/norway_administrative_boundaries_province_polygon.kml");
+    google.maps.event.addListener(geoXml,'parsed', function() {
+        console.log(geoXml.docs);
+      geocoder.geocode( { 'address': "Norway"}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            console.log(results);
+          map.fitBounds(results[0].geometry.viewport); 
+
+          for (var i = 0; i < geoXml.docs[0].gpolygons.length; i++) {
+    var polygon = geoXml.docs[0].gpolygons[i];
+            
+    // Set the fill color for the Polygon
+
+    // Set other style properties if needed
+    polygon.set('strokeColor', 'white'); // Border color
+    polygon.set('strokeWeight', 2); // Border width
+  }
+        } else {
+          alert("Geocode was not successful for the following reason: " + status);
+        }
+      });    
+    })
+
+
+
+    let machines = <%- machines %>;
+
+// Define marker icons for different statuses
+const markerIcons = {
+  active: {
+    url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png',
+    scaledSize: new google.maps.Size(40, 40), // Adjust the width and height as needed
+    origin: new google.maps.Point(0, 0), // (0,0) is the top-left corner of the image
+    anchor: new google.maps.Point(20, 40) 
+  },
+  waiting: {
+    url: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png',
+    scaledSize: new google.maps.Size(40, 40), // Adjust the width and height as needed
+    origin: new google.maps.Point(0, 0), // (0,0) is the top-left corner of the image
+    anchor: new google.maps.Point(20, 40) 
+  },
+  inactive: {
+    url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+    scaledSize: new google.maps.Size(40, 40), // Adjust the width and height as needed
+  origin: new google.maps.Point(0, 0), // (0,0) is the top-left corner of the image
+  anchor: new google.maps.Point(20, 40) 
+  },
+};
+
+// Create an array to store all markers
+let markers = [];
+let infowindows = []
+
+for (let i = 0; i < machines.length; i++) {
+  const status = machines[i].status; // Replace with the actual property that represents the status
+  const marker = new google.maps.Marker({
+    position: { lat: machines[i].latitude, lng: machines[i].longitude },
+    map: map,   
+    title: 'Marker Title',
+    icon: markerIcons[status], // Set the marker icon based on status
+  });
+
+  if(machines[i].status == 'inactive' || machines[i].status == 'waiting') {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+  }
+
+  // Create content for the tooltip
+  const tooltipContent = `
+    <div>
+      <h3>${machines[i].zoneLocation}</h3>
+      <p>Latitude: ${machines[i].latitude}</p>
+      <p>Longitude: ${machines[i].longitude}</p>
+      <p>Status: ${status}</p>
+    </div>
+  `;
+
+  const infowindow = new google.maps.InfoWindow({
+    content: tooltipContent,
+  });
+
+  infowindows.push(infowindow);
+
+  // Attach a click event listener to the marker
+  marker.addListener('click', () => {
+    infowindows.map(iw => {
+        iw.close()
+    })
+
+    geoXml.docs[0].placemarks.map(pm => {
+        pm.polygon.infoWindow.close()
+    })
+
+    infowindow.open(map, marker);
+  });
+
+  markers.push(marker);
+}
+
+
+// Use the MarkerClusterer to cluster nearby markers
+// const markerCluster = new MarkerClusterer(map, markers, {
+//   imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m',
+// });
+
+
+}
+google.maps.event.addDomListener(window, "load", initialize);
+
+
+am4core.ready(function() {
+
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+// Create chart instance
+var chart = am4core.create("chartdiv", am4charts.XYChart);
+
+// Add data
+// chart.data = [
+//   {date:new Date(2019,5,12), value1:50, value2:48, previousDate:new Date(2019, 5, 5)},
+//   {date:new Date(2019,5,13), value1:53, value2:51, previousDate:new Date(2019, 5, 6)},
+//   {date:new Date(2019,5,14), value1:56, value2:58, previousDate:new Date(2019, 5, 7)},
+//   {date:new Date(2019,5,15), value1:52, value2:53, previousDate:new Date(2019, 5, 8)},
+//   {date:new Date(2019,5,16), value1:48, value2:44, previousDate:new Date(2019, 5, 9)},
+//   {date:new Date(2019,5,17), value1:47, value2:42, previousDate:new Date(2019, 5, 10)},
+//   {date:new Date(2019,5,18), value1:59, value2:55, previousDate:new Date(2019, 5, 11)}
+// ]
+
+let issuesGroupedIntoDays = <%- issuesGroupedIntoDays %>;
+
+chart.data = Object.keys(issuesGroupedIntoDays).map(igit => {
+    return {
+        date: igit,
+        value1: issuesGroupedIntoDays[igit].totalIssues,
+        value2: issuesGroupedIntoDays[igit].totalRepeated,
+    }
+})
+
+// chart.data = [
+//     {
+//         date: moment('2023-04').format('YYYY-MM'),
+//         value1: 40,
+//         value2: 30,
+//         previousDate: moment('2023-03')
+//     },
+
+//     {
+//         date: moment('2023-05').format('YYYY-MM'),
+//         value1: 50,
+//         value2: 68,
+//         previousDate: moment('2023-03-01')
+//     },
+
+//     {
+//         date: moment('2023-06').format('YYYY-MM'),
+//         value1: 10,
+//         value2: 12,
+//         previousDate: moment('2023-03')
+//     }
+// ]
+// Create axes
+var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+dateAxis.renderer.minGridDistance = 30;
+
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+// Create series
+var series = chart.series.push(new am4charts.LineSeries());
+series.dataFields.valueY = "value1";
+series.dataFields.dateX = "date";
+series.strokeWidth = 2;
+series.minBulletDistance = 10;
+series.tooltipText = "[bold]Issues:[/] {value1}\n[bold]Repeated:[/] {value2}";
+series.tooltip.pointerOrientation = "vertical";
+series.fillOpacity = 0.1; // Fill the area under the line
+series.stroke = am4core.color("lightblue"); // Set line color
+series.fill = am4core.color("lightgreen"); // Set the fill color
+
+series.name = 'Issues'
+
+
+// Create series
+var series2 = chart.series.push(new am4charts.LineSeries());
+series2.dataFields.valueY = "value2";
+series2.dataFields.dateX = "date";
+series2.strokeWidth = 2;
+series2.fillOpacity = 0.3; // Fill the area under the
+series2.stroke = am4core.color("red"); // Set line color for the second series
+series.fill = am4core.color("red"); // Set the fill color
+series2.name = 'Repeated'
+
+
+// Add cursor
+chart.cursor = new am4charts.XYCursor();
+chart.cursor.xAxis = dateAxis;
+
+chart.legend = new am4charts.Legend();
+
+chart.legend.useDefaultMarker = true; // Show markers in the legend
+
+
+}); // 
+
+    </script>
+</body>
+
+</html>

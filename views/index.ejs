@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Nordic Dashboard</title>
+    <style>
+
+
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+
+
+
+    </style>
+
+    <%- include('./components/headers') %>
+
+<script src="https://d3js.org/d3.v6.js"></script>
+
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <%- include('./components/navbar') %>
+    <%- include('./components/sidebar') %>
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="m-0">Nordic Dashbord</h1>
+            </div><!-- /.col -->
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                <li class="breadcrumb-item active">Dashbord</li>
+                </ol>
+            </div><!-- /.col -->
+            </div><!-- /.row -->
+        </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+            <!-- Info boxes -->
+
+            <div class="welcome-message">Hei, Admin!</div>
+
+          <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <select id="violationsFilter" class="form-control select2 select2-danger" data-dropdown-css-class="select2-danger">
+                        <option value="0">Hele tiden</option>
+                        <option value="6">I går</option>
+                        <option value="1">I dag</option>
+                        <option value="2">3 dager siden</option>
+                        <option value="3">en uke siden</option>
+                        <option value="4">en måned siden</option>
+                        <option value="5">ett år siden</option>
+                    </select>
+                </div>
+                <!-- /.form-group -->
+              </div>
+          </div>
+
+        <div class="row">
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-info elevation-1"><i class="fa-solid fa-triangle-exclamation"></i></span>
+  
+                <div class="info-box-content">
+                  <span class="info-box-text">Total K.S</span>
+                  <span class="info-box-number" id="vio-num">
+                    -
+                  </span>
+                </div>
+                <!-- /.info-box-content -->
+              </div>
+              <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box mb-3">
+                <span class="info-box-icon bg-danger elevation-1"><i class="fa-regular fa-file-pdf"></i></span>
+  
+                <div class="info-box-content">
+                  <span class="info-box-text">Pdfs</span>
+                  <span class="info-box-number" id="pdf-num">-</span>
+                </div>
+                <!-- /.info-box-content -->
+              </div>
+              <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+  
+            <!-- fix for small devices only -->
+            <div class="clearfix hidden-md-up"></div>
+  
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box mb-3">
+                <span class="info-box-icon bg-success elevation-1">
+                    <i class="fa-regular fa-user"></i>
+                </span>
+  
+                <div class="info-box-content">
+                  <span class="info-box-text">Brukere</span>
+                  <span class="info-box-number" id="user-num">-</span>
+                </div>
+                <!-- /.info-box-content -->
+              </div>
+              <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box mb-3">
+                <span class="info-box-icon bg-warning elevation-1">
+                    <i class="fa-solid fa-car-burst"></i>
+                </span>
+  
+                <div class="info-box-content">
+                  <span class="info-box-text">Ulykker</span>
+                  <span class="info-box-number" id="accident-num">-</span>
+                </div>
+                <!-- /.info-box-content -->
+              </div>
+              <!-- /.info-box -->
+            </div>
+            <!-- /.col -->
+            <!-- /.col -->
+            <div class="col-12 col-sm-6 col-md-3">
+                <div class="info-box mb-3">
+                  <span class="info-box-icon bg-secondary elevation-1">
+                    <i class="fa-solid fa-trash"></i>
+                  </span>
+    
+                  <div class="info-box-content">
+                    <span class="info-box-text">Fjernet</span>
+                    <span class="info-box-number" id="removed-num">-</span>
+                  </div>
+                  <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+              </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-info">
+                    <div class="card-header">
+                      <h3 class="card-title">K.S analyse</h3>
+      
+                      <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                          <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                          <i class="fas fa-times"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="chart">
+                        <canvas id="lineChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                      </div>
+                    </div>
+                    <!-- /.card-body -->
+                  </div>
+            </div>
+          </div>
+        <!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+
+    <%- include('./components/footer') %>
+</div>
+<%- include('./components/scripts') %>
+<script src="/plugins/chart.js/Chart.min.js"></script>
+
+
+<script>
+
+    const data = <%- violations %>;
+    const dates = [];
+    const values = [];
+
+    data.forEach(item => {
+        dates.push(item.date);
+        values.push(item.value);
+    });
+
+
+    var areaChartData = {
+      labels  : dates,
+      datasets: [
+        {
+          label               : 'K.S',
+          backgroundColor     : 'rgba(60,141,188,0.9)',
+          borderColor         : 'rgba(60,141,188,0.8)',
+          pointRadius          : true,
+          pointStrokeColor    : 'rgba(60,141,188,1)',
+          pointHighlightFill  : '#fff',
+          pointHighlightStroke: 'rgba(60,141,188,1)',
+          data                : values
+        }
+      ]
+    }
+
+    var areaChartOptions = {
+      maintainAspectRatio : false,
+      responsive : true,
+      legend: {
+        display: false
+      },
+      scales: {
+        xAxes: [{
+          gridLines : {
+            display : false,
+          }
+        }],
+        yAxes: [{
+          gridLines : {
+            display : false,
+          }
+        }]
+      }
+    }
+
+    //-------------
+    //- LINE CHART -
+    //--------------
+    var lineChartCanvas = $('#lineChart').get(0).getContext('2d')
+    var lineChartOptions = $.extend(true, {}, areaChartOptions)
+    var lineChartData = $.extend(true, {}, areaChartData)
+    lineChartData.datasets[0].fill = true;
+    lineChartOptions.datasetFill = true
+
+    var lineChart = new Chart(lineChartCanvas, {
+      type: 'line',
+      data: lineChartData,
+      options: lineChartOptions
+    })
+</script>
+
+
+<script>
+    async function fetchData(url) {
+        const response = await fetch(url);
+        if (response.status === 200) {
+            return await response.json();
+        } else {
+            throw new Error('Failed to fetch data');
+        }
+    }
+
+    async function updateCount() {
+        const vioHolder = document.getElementById('vio-num');
+        const vioRmHolder = document.getElementById('removed-num');
+        const pdfHolder = document.getElementById('pdf-num');
+        const userHolder = document.getElementById('user-num');
+        const accidentHolder = document.getElementById('accident-num');
+
+        const selectVio = document.getElementById('violationsFilter');
+        const value = selectVio.value;
+
+        try {
+            let responseData = await fetchData(`/admin/api/violations/${value}`);
+            let responseRmData = await fetchData(`/admin/api/violations/removed/gn/${value}`);
+            console.log(responseRmData);
+            vioHolder.textContent = responseData;
+            vioRmHolder.textContent = responseRmData;
+        } catch (error) {
+            console.error(error);
+        }
+
+
+        try{
+            let responseData = await fetchData(`/admin/api/info/pdfs`);
+            pdfHolder.textContent = responseData;
+        }catch(error){
+            console.log(error)
+        }
+
+        try{
+            let responseData = await fetchData(`/admin/api/info/users`);
+            userHolder.textContent = responseData;
+        }catch(error){
+            console.log(error)
+        }
+
+        try{
+            let responseData = await fetchData(`/admin/api/info/accidents`);
+            accidentHolder.textContent = responseData;
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        updateCount();
+
+        const selectVio = document.getElementById('violationsFilter');
+        selectVio.addEventListener('change', updateCount);
+    });
+</script>
+</body>
+</html>

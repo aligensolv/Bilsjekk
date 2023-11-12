@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            background-color: #eee;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        p {
+            margin: 5px 0;
+        }
+        .reports {
+            width: 60%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 2px solid;
+        }
+        .reports th, td {
+            border: 2px solid;
+            padding: 8px;
+            text-align: left;
+            background-color: #f2f2f2;
+        }
+
+
+        .reports td[colspan="2"]{
+            text-align: center;
+        }
+
+        .reports th {
+            background-color: #f2f2f2;
+        }
+
+        .answers {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid grey;
+        }
+        .answers th, td {
+            border: 1px solid grey;
+            padding: 8px;
+            text-align: left;
+            background-color: #f2f2f2;
+        }
+
+
+        .answers td[colspan="2"]{
+            text-align: center;
+        }
+
+        .answers th {
+            background-color: #f2f2f2;
+        }
+
+        .answers td:first-child {
+            width: 50%;
+        }
+
+        .answers td:last-child {
+            border: 1px solid grey;
+        }
+
+
+
+
+        img {
+            margin-top: 20px;
+            max-width: 100%;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+        }
+        .image-item {
+            text-align: center;
+        }
+        .image-item img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .container{
+            width: 80%;
+        }
+
+        .svg-container {
+            position: fixed;
+            top: 0;
+            right: 0;
+            pointer-events: none; /* Make the SVG not intercept mouse events */
+        }
+
+        .headline{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .red{
+            color:red;
+        }
+
+        .green{
+            color:green;
+        }
+
+
+    </style>
+    <meta charset="UTF-8" />
+</head>
+<body>
+<div class="svg-container">
+    <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="100,0 0,0 100,100" fill="cornflowerblue" />
+    </svg>
+</div>
+<div class="container">
+    <div class="tria"></div>
+    <div class="headline">
+        <img src="https://nordic.bilsjekk.in/images/assets/bil.png" alt="Muesem" width="50px" height="50px">
+        <h2>Dagns Report</h2>
+        <div></div>
+    </div>
+    <hr>
+    <table class="reports">
+        <colgroup>
+            <col style="width: auto;">
+            <col style="width: auto;">
+            <col style="width: 100%;">
+        </colgroup>
+        <tr>
+            <td colspan="2">Rute</td>
+            <td>{{location}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">Bil</td>
+            <td>{{car}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">Vakt</td>
+            <td>{{shift}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">Dato</td>
+            <td>{{date}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">Ansatt</td>
+            <td>{{user}}</td>
+        </tr>
+        <tr>
+            <td colspan="2">Antall<br>K.S</td>
+            <td>{{violations}}</td>
+        </tr>
+    </table>
+
+
+    <table class="answers">
+        <tr>
+            <th style="text-align: center">Title</th>
+            <th style="text-align: center">Status</th>
+            <th style="text-align: center" >Notes</th>
+        </tr>
+
+        {{#each rows}}
+        <tr>
+            <td>{{title}}</td>
+            <td style="text-align: center">{{status}}</td>
+            <td style="text-align: center;" class="{{positive}}">{{notes}}</td>
+        </tr>
+        {{/each}}
+    </table>
+    <div>
+        <div class="headline" style="page-break-before: always;">
+            <img src="https://nordic.bilsjekk.in/images/assets/bil.png" alt="Muesem" width="50px" height="50px">
+            <h2>Bilde</h2>
+            <div></div>
+        </div>
+        <hr>
+        {{#each groupedImages}}
+        <h2>{{@key}}</h2>
+        <div class="image-grid"></div>
+        {{#each this}}
+        <div class="image-item">
+            <img src="{{path}}" alt="{{@key}}">
+        </div>
+        {{/each}}
+
+    </div>
+    {{/each}}
+</div>
+</div>
+</body>
+</html>

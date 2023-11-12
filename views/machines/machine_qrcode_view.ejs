@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>P-Automat qr-kode</title>
+        <%- include('../components/headers') %>
+
+        <style>
+            .frame{
+                width: 200px;
+                height: auto;
+
+                background-color: transparent;
+                border: 5px solid;
+                border-radius: 12px;
+
+                overflow: hidden;
+            }
+
+            .frame-header{
+                width: 200px;
+                font-size: 20px;
+                padding: 4px;
+                border-radius: 12px;
+                background-color: black;
+                color: white;
+                text-align: center;
+                position: relative;
+                margin-bottom: 30px;
+            }
+
+            .frame-header::after{
+                content: '';
+                position: absolute;
+                width: 0; 
+                height: 0; 
+                border-left: 20px solid transparent;
+                border-right: 20px solid transparent;
+                
+                border-top: 20px solid #000;
+                bottom: -20px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        </style>
+    </head>
+    <body class="hold-transition sidebar-mini">
+        <div class="wrapper">
+            <%- include('../components/navbar') %>
+            <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %> 
+
+            <div class="content-wrapper">
+                <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item"><a href="/machines">P-Automater</a></li>
+                    <li class="breadcrumb-item"><a href="/machines"><%= machine.serial %></a></li>
+                    <li class="breadcrumb-item active">QR-Kode</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+                <div class="content">
+                    <div class="container-fluid mt-5">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="text">QR-kode</h2>
+                        </div>
+                        <div class="row justify-content-center">
+                            <div class="col-md-6 text-center p-2">
+                                <div class="frame-container p-4" id="only-frame" style="max-width: 250px;">
+                                    <p class="frame-header">
+                                        Skann her
+                                    </p>
+                                    <div class="frame">
+                                        <img src="<%= machine.qrcode %>" alt="QR Code" class="img-fluid">
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="btn btn-warning mr-2" onclick="saveImage()">
+                                        Nedlasting
+                                    </div>
+                                    <a href="/machines" class="btn btn-secondary">Avbrytt</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <%- include('../components/footer') %>
+
+        </div>
+
+        <%- include('../components/scripts') %>
+
+        <script type="text/javascript" src="/dist/canvas/html2canvas.js"></script>
+        <script type="text/javascript" src="/dist/canvas/canvas2image.js"></script>
+
+        <script>
+            const saveImage = async () =>{
+                let qrcode = document.getElementById('only-frame');
+                let canvas = await html2canvas(qrcode);
+
+                var a = document.createElement('a');
+
+                a.href = canvas.toDataURL("image/png").replace("image/jpeg", "image/octet-stream");
+                a.download = `${Date.now()}.jpg`;
+                a.click();
+
+            }
+        </script>
+    </body>
+</html>

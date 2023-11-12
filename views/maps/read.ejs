@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kart</title>
+
+    <%- include('../components/headers') %>
+
+
+  <!-- DataTables -->
+  <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+  <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+  <!-- Theme style -->
+
+  <style>
+    thead input {
+        width: 100%;
+    }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini">
+
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+    <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item">Kart</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center mb-2 container-fluid">
+              <a href="/maps/create" class="btn btn-info btn-sm mr-1">
+                  <i class="fa fa-plus"></i>
+                  <span>Skape</span>
+              </a>
+              <button data-toggle="modal" data-target="#confirmAllDeleteModal" class="btn btn-danger btn-sm">
+                  <i class="fa fa-trash"></i>
+                  <span>Slett alle</span>
+              </button>
+          </div>
+
+ 
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Kartdata
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                              <table id="example1" class="table table-bordered table-striped text-center">
+                                <thead>
+                                <tr>
+                                  <th scope="col">Lengdegrad</th>
+                                  <th scope="col">Breddegrad</th>
+                                  <th scope="col">Data</th>
+                                  <th scope="col">sone</th>
+                                  <th scope="col">Handlinger</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                  <% maps.forEach(function(map) { %>
+                                    <tr>
+                                        <td><%= map.longitude %></td>
+                                        <td><%= map.latitude %></td>
+                                        <td class="truncate-text" data-toggle="modal" data-target="#dataModal" data-map-data="<%= map.data %>">
+                                            <a href="#">show</a>
+                                          </td>
+                                        <td><%= map.zone ? map.zone.name : 'N/A' %></td>
+                                        <td class="controls">
+                                            <a href="/maps/<%= map._id %>/edit" class="btn btn-info btn-sm">
+                                              <i class="fa fa-edit"></i>
+                                            </a>
+                                            <button class="btn btn-danger btn-sm delete-map" data-toggle="modal" data-target="#deleteMapModal<%= map._id %>">
+                                              <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Bootstrap Delete Confirmation Modal -->
+                                    <div class="modal fade" id="deleteMapModal<%= map._id %>" tabindex="-1" aria-labelledby="deleteMapModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog">
+                                          <div class="modal-content">
+                                              <div class="modal-header">
+                                                  <h5 class="modal-title" id="deleteMapModalLabel">Bekreft sletting</h5>
+                                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+                                              </div>
+                                              <div class="modal-body">
+                                                vil du slette dette kartet?
+                                              </div>
+                                              <div class="modal-footer">
+                                                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                                                  <button type="button" class="btn btn-danger"data-dismiss="modal" id="confirmDeleteMap" onclick="deleteMap('<%= map._id %>')">Slett</button>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                                <% }); %>
+                                </tbody>
+                              </table>
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+
+
+        <%- include('../components/footer') %>
+    </div>
+
+        
+  
+      <!-- Add a Bootstrap Modal for displaying the full data -->
+  <div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <!-- Add 'modal-lg' for a larger modal -->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="dataModalLabel">Full data</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body scrollable-modal-body">
+          <pre><code id="fullDataCode"></code></pre>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary btn-sm float-end" id="copyFullData">Kopier data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal fade" id="confirmAllDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmAllDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmAllDeleteModalLabel">Slett alle kartbekreftelser</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                  Vil du slette alle kart?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbryt</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" id="confirmAllDeleteBtn" onclick="deleteAllMaps()">Slett</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<%- include('../components/scripts') %>
+
+<!-- DataTables  & Plugins -->
+<script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+<script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+<script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+<script src="/plugins/jszip/jszip.min.js"></script>
+<script src="/plugins/pdfmake/pdfmake.min.js"></script>
+<script src="/plugins/pdfmake/vfs_fonts.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+<script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+<script>
+    $(function () {
+
+      $("#example1").DataTable({
+        "responsive": true, "lengthChange": true, "autoWidth": false,
+        "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+        "language": {
+        "emptyTable": "Ingen data tilgjengelig",
+        "infoEmpty": "Ingen data tilgjengelig Info",
+        "zeroRecords": "Det er ingen samsvarende data"
+        } ,
+      }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+    });
+  </script>
+<script>
+    var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        })
+
+
+  // Function to handle opening the modal and displaying full data
+  const dataCells = document.querySelectorAll('.truncate-text');
+    const fullDataCode = document.getElementById('fullDataCode');
+    const copyFullDataButton = document.getElementById('copyFullData');
+  
+    dataCells.forEach(cell => {
+      cell.addEventListener('click', (event) => {
+        const fullData = event.currentTarget.getAttribute('data-map-data');
+        fullDataCode.textContent = fullData;
+        $('#dataModal').modal('show');
+      });
+    });
+  
+    // Function to handle copying the full data
+    copyFullDataButton.addEventListener('click', () => {
+      const textToCopy = fullDataCode.textContent;
+      const textArea = document.createElement('textarea');
+      textArea.value = textToCopy;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      Toast.fire({
+        icon: 'success',
+        title: 'Data kopiert til utklippstavlen!'
+      })
+    });
+  
+    // Function to fully close the modal when the X button is clicked
+    $('#dataModal').on('hidden.bs.modal', function () {
+      $('#dataModal').modal('dispose');
+    });
+        // Function to handle map deletion
+        const deleteButtons = document.querySelectorAll('.delete-map');
+        const confirmDeleteMapButton = document.getElementById('confirmDeleteMap');
+
+
+        function deleteMap(id){
+          console.log(id);
+          // Send a fetch request to delete the map
+          fetch(`/admin/api/maps/${id}`, {
+                    method: 'DELETE',
+                })
+                .then(async response => {
+                    if (response.status == 200) {
+                        Toast.fire({
+                          icon:'success',
+                          title:'Kartet ble slettet'
+                        })
+
+                        setTimeout(() =>{
+                          location.reload();
+                        },3000)
+                    } else {
+                      Toast.fire({
+                        icon: 'error',
+                        title: (await response.json()).toString(),
+                      })
+                    }
+                })
+                .catch(error => {
+                  console.error(error.message)
+                  Toast.fire({
+                    icon: 'error',
+                    title: error.message,
+                  })
+                });
+        }
+
+        function deleteAllMaps(){
+          fetch(`/admin/api/maps`, {
+                    method: 'DELETE',
+                })
+                .then(async response => {
+                    if (response.status == 200) {
+                        Toast.fire({
+                          icon:'success',
+                          title:'Alle kart ble slettet'
+                        })
+
+                        setTimeout(() =>{
+                          location.reload();
+                        },3000)
+                    } else {
+                      Toast.fire({
+                        icon: 'error',
+                        title: (await response.json()).toString(),
+                      })
+                    }
+                })
+                .catch(error => {
+                  console.error(error.message)
+                  Toast.fire({
+                    icon: 'error',
+                    title: error.message,
+                  })
+                });
+        }
+</script>
+</body>
+</html>

@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Innstillinger</title>
+    <!-- Include Bootstrap CSS -->
+ 
+
+    <%- include('../components/headers') %>
+    <style>
+      .wrap-options{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.wrap-options > div{
+  margin-right: 10px;
+  margin-bottom: 10px;
+  background-color: grey;
+  color: white;
+  font-weight: bolder;
+  border-radius: 12px;
+  user-select: none;
+  padding: 4px 20px;
+  transition: 0.8 ease-in;
+}
+
+.selected-option{
+  background-color: steelblue !important;
+}
+    </style>
+</head>
+<body class="hold-transition sidebar-mini">
+  <div class="wrapper">
+    <%- include('../components/navbar') %>
+    <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %> 
+
+    <div class="content-wrapper">
+      <!-- Content Header (Page header) -->
+      <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+            <div class="col-sm-12">
+                <ol class="breadcrumb float-sm-left">
+                <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                <li class="breadcrumb-item active">Innstillinger</li>
+                </ol>
+            </div><!-- /.col -->
+            </div><!-- /.row -->
+
+        </div><!-- /.container-fluid -->
+        </div>
+
+        <div class="content">
+          <div class="row">
+              <div class="col-lg-12">
+                <div class="card card-primary card-tabs">
+                  <div class="card-header p-0 pt-1">
+                    <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                      <li class="nav-item">
+                        <a class="nav-link active" id="custom-tabs-one-Hjem-tab" data-toggle="pill" href="#custom-tabs-one-Hjem" role="tab" aria-controls="custom-tabs-one-Hjem" aria-selected="true">Generell</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="custom-tabs-one-profile-tab" data-toggle="pill" href="#custom-tabs-one-profile" role="tab" aria-controls="custom-tabs-one-profile" aria-selected="false">applikasjon</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="custom-tabs-one-messages-tab" data-toggle="pill" href="#custom-tabs-one-messages" role="tab" aria-controls="custom-tabs-one-messages" aria-selected="false">VPS</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="custom-tabs-one-settings-tab" data-toggle="pill" href="#custom-tabs-one-settings" role="tab" aria-controls="custom-tabs-one-settings" aria-selected="false">Varsler</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="card-body">
+                    <div class="tab-content" id="custom-tabs-one-tabContent">
+                      <div class="tab-pane fade show active" id="custom-tabs-one-Hjem" role="tabpanel" aria-labelledby="custom-tabs-one-Hjem-tab">
+                        <div class="container tabcontent" id="general">        
+                  
+                          <div class="card mb-4">
+                              <div class="card-body">
+                                  <h2 class="card-title">E-postmal</h2>
+                                  <p class="card-text">Bruk plassholdere for dynamisk innhold: {private}, {board}, {kilometers}, {pnid}</p>
+                  
+                                  <div>
+                                      <div class="mb-3">
+                                          <label for="emailSubject" class="form-label">Emne</label>
+                                          <input type="text" id="emailSubject" name="emailSubject" class="form-control" value="<%= email_subject %>" required>
+                                      </div>
+                                      <div class="mb-3">
+                                          <label for="emailText" class="form-label" id="emailSubject">Tekst</label>
+                                          <textarea id="emailText" name="emailText" class="form-control" rows="6" required><%= email_template %></textarea>
+                                      </div>
+                                    </div>
+                                  <div class="preview mt-3">
+                                      <h4 class="card-title email-preview-subject"></h4>
+                                      <p class="card-text email-preview-text"></p>
+                                  </div>
+                  
+                                  <div class="d-flex justify-content-end align-items-center">
+                                    <button type="submit" class="btn btn-info btn-sm" onclick="updateEmailTemplate()">Lagre</button>
+                                  </div>
+                              </div>
+                          </div>
+                  
+                          <div class="card">
+                              <div class="card-body">
+                                  <h2 class="card-title">SMS-mal</h2>
+                                  <p class="card-text">Bruk plassholdere for dynamisk innhold: {private}, {board}, {kilometers}, {pnid}</p>
+                                  <div>
+                                      <div class="mb-3">
+                                          <label for="smsText" class="form-label">Tekst</label>
+                                          <textarea id="smsText" name="smsText" class="form-control" rows="6" required><%= sms_template %></textarea>
+                                      </div>  
+                                  </div>
+                                  <div class="preview mt-3">
+                                      <p class="card-text sms-template-preview"></p>
+                                  </div>
+                  
+                                  <div class="d-flex justify-content-end align-items-center">
+                                    <button type="submit" class="btn btn-info btn-sm" onclick="updateSmsTemplate()">Lagre</button>
+                                  </div>
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="tab-pane fade" id="custom-tabs-one-profile" role="tabpanel" aria-labelledby="custom-tabs-one-profile-tab">
+                        <div class="container tabcontent" id="application">
+                          <div class="card mb-4">
+                              <div class="card-body">
+                                  <h2 class="card-title">Skift Velg Informasjon</h2>
+                                  <div>
+                                      <div class="mb-3">
+                                          <label for="shiftSelectText" class="form-label">Tekst</label>
+                                          <textarea id="shiftSelectText" name="shiftSelectText" class="form-control" rows="6" required><%= shift %></textarea>
+                                      </div>
+                                  </div>
+                                  <div class="d-flex justify-content-end align-items-center">
+                                      <button type="submit" class="btn btn-info btn-sm" onclick="updateShiftSelectText()">Lagre</button>
+                                  </div>
+                              </div>
+                          </div>
+                      
+                          <div class="card mb-4">
+                              <div class="card-body">
+                                  <h2 class="card-title">Informasjon om bilvalg</h2>
+                                  <div>
+                                      <div class="mb-3">
+                                          <label for="carSelectText" class="form-label">Tekst</label>
+                                          <textarea id="carSelectText" name="carSelectText" class="form-control" rows="6" required><%= car %></textarea>
+                                      </div>
+                                  </div>
+                                  <div class="d-flex justify-content-end align-items-center">
+                                      <button type="submit" class="btn btn-info btn-sm" onclick="updateCarSelectText()">Lagre</button>
+                                  </div>
+                              </div>
+                          </div>
+                      
+                          <div class="card mb-4">
+                              <div class="card-body">
+                                  <h2 class="card-title">Service Kilometer Beskrivelse</h2>
+                                  <div>
+                                      <div class="mb-3">
+                                          <label for="serviceKilometersText" class="form-label">Tekst</label>
+                                          <textarea id="serviceKilometersText" name="serviceKilometersText" class="form-control" rows="6"><%= kilometer %></textarea>
+                                      </div>
+                                  </div>
+                                  <div class="d-flex justify-content-end align-items-center">
+                                      <button type="submit" class="btn btn-info btn-sm" onclick="updateServiceKilometersText()">Lagre</button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                      </div>
+                      <div class="tab-pane fade" id="custom-tabs-one-messages" role="tabpanel" aria-labelledby="custom-tabs-one-messages-tab">
+                        <div class="container tabcontent" id="vps">
+                          <div class="card mb-4 p-2">
+                            <div class="card-title">
+                              VPS ledelse
+                            </div>
+                            <div class="card-body d-flex align-items-center justify-content-end">
+                              <button class="btn btn-info btn-sm mr-2" onclick="updateNordic()">
+                                Oppdater Nordic
+                              </button>  
+                              
+                              <button class="btn btn-info btn-sm" onclick="restartVPS()">
+                                Start VPS på nytt
+                              </button>
+                            </div>
+                        </div>
+                      
+                        <div class="card mb-4 p-2">
+                          <div class="card-title">
+                            Sikkerhetskopiering av data
+                          </div>
+                          <div class="card-body d-flex align-items-center justify-content-end">
+                            <button onclick="prepareBackup()" class="btn btn-info btn-sm">Forbered sikkerhetskopiering</button>
+                          </div>
+                        </div>
+                        </div>
+                      </div>
+                      <div class="tab-pane fade" id="custom-tabs-one-settings" role="tabpanel" aria-labelledby="custom-tabs-one-settings-tab">
+                        <div class="container tabcontent">
+                          <div class="d-flex justify-content-end p-2 mb-2 btn-group">
+                            <button data-toggle="modal" data-target="#createIMEIModal" class="btn btn-info me-2 btn-sm">
+                              <i class="fa fa-plus"></i>
+                              <span>Ny IMEI</span>
+                            </button>
+                            <button data-toggle="modal" data-target="#createZoneModal" class="btn btn-info me-2 btn-sm">
+                              <i class="fa fa-plus"></i>
+                              <span>Ny sone</span>
+                            </button>
+                            <a class="btn btn-dark me-2 btn-sm" href="/zones">
+                              <i class="fa fa-info"></i>
+                              <span>Administrer soner</span>
+                            </a>
+                            <a class="btn btn-dark btn-sm" href="/imeis">
+                              <i class="fa fa-info"></i>
+                              <span>Administrer IMEIS</span>
+                            </a>
+                          </div>
+                      
+                          <div class="card p-4 mb-2">
+                            <div class="card-title">
+                              Send varsler for alle brukere/enheter
+                            </div>
+                            <div class="form-group mb-2">
+                              <label for="all-title">Enter Title</label>
+                              <input type="text" placeholder="Title" id="all-title" class="form-control"/>
+                            </div>
+                            <div class="form-group mb-2">
+                              <label for="all-body">Skriv inn innhold</label>
+                              <input type="text" placeholder="Innhold" id="all-body" class="form-control"/>
+                            </div>
+                            <div class="card-body d-flex justify-content-end ">
+                              <button onclick="sendNotification()" class="btn btn-sm btn-info">Send varsler</button>
+                            </div>
+                          </div>
+                      
+                          <div class="card p-2 mb-2">
+                            <div class="card-body">
+                              <div class="card-title">Velg Enhet for å sende varsel</div>
+                              <div class="form-group mb-2">
+                                <label for="imei-title">Skriv inn tittel</label>
+                                <input type="text" placeholder="Tittel" id="imei-title" class="form-control"/>
+                              </div>
+                              <div class="form-group mb-2">
+                                <label for="imei-body">Skriv inn innhold</label>
+                                <input type="text" placeholder="Innhold" id="imei-body" class="form-control"/>
+                              </div>
+                              <div class="wrap-options" id="imei-options">
+                                  
+                              </div>
+                              <div class="d-flex justify-content-end">
+                                <button onclick="sendNotificationToDevice()" class="btn btn-sm btn-info">Send varsler</button>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div class="card p-2 mb-2">
+                            <div class="card-body">
+                              <div class="card-title">Velg Sone for å sende varsler</div>
+                              <div class="form-group mb-2">
+                                <label for="zone-title">Skriv inn tittel</label>
+                                <input type="text" placeholder="Tittel" id="zone-title" class="form-control"/>
+                              </div>
+                              <div class="form-group mb-2">
+                                <label for="zone-body">Skriv inn innhold</label>
+                                <input type="text" placeholder="Innhold" id="zone-body" class="form-control"/>
+                              </div>
+                              <div class="form-group">
+                                <label for="zoneSelect">Velg Sone</label>
+                                <div class="wrap-options" id="zones-options">
+                                  
+                                </div>
+                              </div>
+                              <div class="d-flex justify-content-end">
+                                <button onclick="sendNotificationsToZones()" class="btn btn-sm btn-info">Send varsler</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /.card -->
+                </div>
+                    
+              
+              
+              
+               
+              
+                  <!-- Create IMEI Modal -->
+              <div class="modal fade" id="createIMEIModal" tabindex="-1" aria-labelledby="createIMEIModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createIMEIModalLabel">Opprett IMEI</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="imeiInput" class="form-label">IMEI-nummer</label>
+                                    <input type="text" class="form-control" id="imeiInput" placeholder="Skriv inn IMEI-nummer" required>
+                                </div>
+              
+                                <div class="mb-3">
+                                  <label for="imeiName" class="form-label">IMEI-navn</label>
+                                  <input type="text" class="form-control" id="imeiName" placeholder="Skriv inn IMEI-navn" required>
+                              </div>
+              
+                                <div class="mb-3">
+                                  <label for="zone" class="form-label">Velg Sone</label>
+                                  <select id="zone" name="zone" class="form-select custom-select" required>
+                                      <!-- Options will be added dynamically using JavaScript -->
+                                  </select>
+                              </div>
+                                <!-- Add more input fields for other IMEI-related data as needed -->
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Lukk</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveIMEIData()">Lagre</button>
+                        </div>
+                    </div>
+                </div>
+              </div>
+              
+              <!-- Create Zone Modal -->
+              <div class="modal fade" id="createZoneModal" tabindex="-1" aria-labelledby="createZoneModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createZoneModalLabel">Opprett sone</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="zoneNameInput" class="form-label">Sonenavn</label>
+                                    <input type="text" class="form-control" id="zoneNameInput" placeholder="Enter zone name" required>
+                                </div>
+                                <!-- Add more input fields for other zone-related data as needed -->
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Lukk</button>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="saveZoneData()">Lagre</button>
+                        </div>
+                    </div>
+                </div>
+              </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <%- include('../components/footer') %>
+
+  </div>
+
+
+
+    
+  <%- include('../components/scripts') %>
+
+  <script>
+    var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+  </script>
+    <script>
+      // Function to populate the zone dropdown with data from /admin/api/zones
+async function populateZoneDropdown() {
+            try {
+                const zoneDropdown = document.getElementById('zone');
+
+                // Fetch zones data from /admin/api/zones
+                const response = await fetch('/admin/api/zones');
+                const zones = await response.json();
+
+                // Populate the dropdown options
+                zones.forEach((zone) => {
+                    const option = document.createElement('option');
+                    option.value = zone._id;
+                    option.text = zone.name;
+                    zoneDropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching and populating zones:', error);
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Populate the zone dropdown when the page loads
+            populateZoneDropdown();
+        });
+    </script>
+
+<script>
+  async function initializeData(){
+
+    let zonesOptions = document.getElementById('zones-options')
+    let imeiOptions = document.getElementById('imei-options')
+  
+    let zones = await (await fetch('/admin/api/zones')).json()
+    let imeis = await (await fetch('/admin/api/imeis')).json()
+
+  console.log(zones);
+  console.log(imeis);
+
+  let zoneSelected = []
+  let imeiSelected = []
+  
+  for(let i = 0; i < zones.length; i++){
+    let div = document.createElement('div')
+    div.textContent = zones[i].name
+    div.setAttribute('data-value',zones[i]._id)
+
+    div.addEventListener('click',(e) =>{
+      if(!zoneSelected.includes(e.target.textContent)){
+        e.target.classList.add('selected-option')
+        zoneSelected.push(zones[i].name)
+      }else{
+        e.target.classList.remove('selected-option')
+        zoneSelected = zoneSelected.filter(el => el != e.target.textContent)
+      }
+    })
+
+    zonesOptions.appendChild(div)
+  }
+
+
+  for(let i = 0; i < imeis.length; i++){
+    let div = document.createElement('div')
+    div.textContent = imeis[i].serial
+    div.setAttribute('data-value',imeis[i]._id)
+
+    div.addEventListener('click',(e) =>{
+      if(!imeiSelected.includes(e.target.textContent)){
+        e.target.classList.add('selected-option')
+        imeiSelected.push(imeis[i].serial)
+      }else{
+        e.target.classList.remove('selected-option')
+        imeiSelected = imeiSelected.filter(el => el != e.target.textContent)
+      }
+
+      console.log(imeiSelected)
+    })
+
+    imeiOptions.appendChild(div)
+  }
+  }
+
+  initializeData()
+</script>
+
+<script>
+      async function saveIMEIData() {
+        try{
+// Retrieve data from input fields
+const imeiInput = document.getElementById('imeiInput').value;
+const zone = document.getElementById('zone').value;
+
+
+let response = await fetch('/admin/api/imeis',{
+  method: 'POST',
+  headers:{
+    'Content-Type': 'application/json; charset=utf-8'
+  },
+  body:JSON.stringify({
+    serial: imeiInput,
+    zone: zone
+  })
+})
+
+if(response.status == 200){
+  Toast.fire({
+    icon: 'success',
+    title: 'Imei ble reddet'
+  })
+  setTimeout(() =>{
+    location.reload()
+  },3000)
+}else{
+  Toast.fire({
+    icon: 'error',
+    title: await response.json()
+  })
+}
+        }catch(error){
+          Toast.fire({
+            icon: 'error',
+            title: error.message
+          })        
+        }
+      }
+  
+      async function saveZoneData() {
+        try{
+          // Retrieve data from input fields
+          const zoneInput = document.getElementById('zoneNameInput').value;
+
+          let response = await fetch('/admin/api/zones',{
+            method: 'POST',
+            headers:{
+              'Content-Type': 'application/json; charset=utf-8'
+            },
+            body:JSON.stringify({
+              name: zoneInput
+            })
+          })
+
+          if(response.status == 200){
+            Toast.fire({
+              icon: 'success',
+              title: 'sonen ble lagret'
+            })
+            setTimeout(() =>{
+              location.reload()
+            },3000)
+          }else{
+            Toast.fire({
+              icon: 'error',
+              title: await response.json()
+            })
+          }
+          }catch(error){
+            Toast.fire({
+              icon: 'error',
+              title: error.message
+            })
+        }
+      }
+</script>
+  
+
+    <script>
+      async function sendNotification(){
+        try{
+          let response = await fetch('/admin/api/notifications/users',{
+            method:'POST',
+            headers:{
+              'Content-Type': 'application/json; charset=utf-8'
+            },
+            body:JSON.stringify({
+              title: document.getElementById('all-title').value,
+              body: document.getElementById('all-body').value,
+            })
+          })
+
+          if(response.status == 200){
+            Toast.fire({
+              icon: 'success',
+              title: 'varsel ble sendt til alle enheter og brukere'
+            })
+          }
+        }catch(error){
+          Toast.fire({
+            icon: 'error',
+            title: error.message
+          })
+        }
+      }
+
+
+      async function sendNotificationsToZones(){
+        try{
+          let zonesSelectedContainer = document.getElementById('zones-options')
+          let finalSelectedZones = zonesSelectedContainer.getElementsByClassName('selected-option')
+          let toSendZones = []
+          for(let i = 0;i < finalSelectedZones.length;i++){
+            toSendZones.push(finalSelectedZones.item(i).getAttribute('data-value'))
+          }
+
+          
+          let response = await fetch('/admin/api/notifications/zones',{
+            method:'POST',
+            headers:{
+              'Content-Type': 'application/json; charset=utf-8'
+            },
+            body: JSON.stringify({
+              title: document.getElementById('zone-title').value,
+              body: document.getElementById('zone-body').value,
+              zones: toSendZones
+            })
+          })
+
+          if(response.status == 200){
+            Toast.fire({
+              icon: 'success',
+              title: 'varsel ble sendt til alle valgte soner'
+            })
+          }
+        }catch(error){
+          Toast.fire({
+              icon: 'error',
+              title: error.message
+            })
+        }
+      }
+
+      async function sendNotificationToDevice(){
+        try{
+          let imeisSelectedContainer = document.getElementById('imei-options')
+          let finalSelectedImeis = imeisSelectedContainer.getElementsByClassName('selected-option')
+          let toSendImeis = []
+          for(let i = 0;i < finalSelectedImeis.length;i++){
+            toSendImeis.push(finalSelectedImeis.item(i).textContent)
+          }
+
+          let response = await fetch('/admin/api/notifications/devices',{
+            method:'POST',
+            headers:{
+              'Content-Type': 'application/json; charset=utf-8'
+            },
+            body: JSON.stringify({
+              title: document.getElementById('imei-title').value,
+              body: document.getElementById('imei-body').value,
+              imeis: toSendImeis
+            })
+          })
+
+          if(response.status == 200){
+            Toast.fire({
+              icon: 'success',
+              title: 'varselet ble sendt til alle valgte enheter'
+            })
+          }
+        }catch(error){
+          Toast.fire({
+            icon: 'error',
+            title: error.message
+          })
+        }
+      }
+
+    </script>
+    <script>
+      async function restartVPS() {
+        await fetch('/admin/api/vps/restart').then(() =>{
+          Toast.fire({
+            icon: 'success',
+            title: 'vps-maskinen ble startet på nytt'
+          })
+        }).catch(err => {
+          Toast.fire({
+              icon: 'error',
+              title: err.message
+            })
+        })
+      }
+
+      async function updateNordic() {
+        await fetch('/admin/api/vps/update').then(() =>{
+          Toast.fire({
+            icon: 'success',
+            title: 'Kontrollpanelet ble oppdatert'
+          })
+        }).catch(err => {
+          Toast.fire({
+              icon: 'error',
+              title: err.message
+            })
+        })
+      }
+
+      async function prepareBackup(){
+        await fetch('/admin/api/vps/backup/prepare').then(() =>{
+          Toast.fire({
+            icon: 'success',
+            title: 'Backup is done'
+          })
+        }).catch(err =>{
+          Toast.fire({
+              icon: 'error',
+              title: err.message
+            })
+        })
+      }
+
+    </script>
+    <script>
+      async function updateShiftSelectText(){
+        try{
+          let shiftText = document.getElementById('shiftSelectText').value
+          let response = await fetch('/admin/api/settings/shift',{
+            method:'PUT',
+            body:JSON.stringify({
+              shift: shiftText
+            }),
+            headers:{
+              'Content-Type': 'application/json; charset=utf-8'
+            }
+          })
+
+          if(response.status == 200){
+            Toast.fire({
+              icon: 'success',
+              title: 'skiftinformasjon oppdatert'
+            })
+          }
+        }catch(error){
+          Toast.fire({
+              icon: 'error',
+              title: error.message
+            })
+        }
+      }
+
+      async function updateCarSelectText(){
+        try{
+          let carText = document.getElementById('carSelectText').value
+          let response = await fetch('/admin/api/settings/car',{
+            method:'PUT',
+            body:JSON.stringify({
+              car: carText
+            }),
+            headers:{
+              'Content-Type': 'application/json; charset=utf-8'
+            }
+          })
+
+          if(response.status == 200){
+            Toast.fire({
+              icon: 'success',
+              title: 'Bilinformasjonen ble oppdatert'
+            })
+          }
+        }catch(error){
+          Toast.fire({
+              icon: 'error',
+              title: error.message
+            })
+        }
+      }
+
+      async function updateServiceKilometersText(){
+        try{
+          let serviceKilometerText = document.getElementById('serviceKilometersText').value
+          let response = await fetch('/admin/api/settings/kilometer',{
+            method:'PUT',
+            body:JSON.stringify({
+              kilometer: serviceKilometerText
+            }),
+            headers:{
+              'Content-Type': 'application/json; charset=utf-8'
+            }
+          })
+
+          if(response.status == 200){
+            Toast.fire({
+              icon: 'success',
+              title: 'Service Kilometer informasjon ble oppdatert'
+            })
+          }
+        }catch(error){
+          Toast.fire({
+              icon: 'error',
+              title: error.message
+            })
+        }
+      }
+
+    
+    </script>
+    
+    <script>
+
+
+
+
+      const emailText = document.getElementById('emailText');
+      const emailPreviewText = document.querySelector('.email-preview-text');
+
+      const emailSubject = document.getElementById('emailSubject')
+      const emailSubjectPreview = document.querySelector('.email-preview-subject')
+
+      const smsTestPreview = document.querySelector('.sms-template-preview')
+      const smsText = document.getElementById('smsText')
+
+      smsText.addEventListener('input', function() {
+          const template = smsText.value;
+          const updatedPreview = template
+              .replace(/{private}/g, 'EL 01')
+              .replace(/{board}/g, 'Ec65656')
+              .replace(/{pnid}/g, 'pn167')
+              .replace(/{kilometers}/g, '2000');
+          
+          smsTestPreview.textContent = updatedPreview;
+      });
+
+
+      smsTestPreview.textContent = '<%=sms_template%>'
+              .replace(/{private}/g, 'EL 01')
+              .replace(/{board}/g, 'Ec65656')
+              .replace(/{pnid}/g, 'pn167')
+              .replace(/{kilometers}/g, '2000');
+
+      emailSubjectPreview.textContent = '<%=email_subject%>'
+              .replace(/{private}/g, 'EL 01')
+              .replace(/{board}/g, 'Ec65656')
+              .replace(/{pnid}/g, 'pn167')
+              .replace(/{kilometers}/g, '2000');
+      
+      emailSubject.addEventListener('input', function() {
+          const template = emailSubject.value;
+          const updatedPreview = template
+              .replace(/{private}/g, 'EL 01')
+              .replace(/{board}/g, 'Ec65656')
+              .replace(/{pnid}/g, 'pn167')
+              .replace(/{kilometers}/g, '2000');
+          
+          emailSubjectPreview.textContent = updatedPreview;
+      });
+
+
+      emailPreviewText.textContent = '<%=email_template%>'
+              .replace(/{private}/g, 'EL 01')
+              .replace(/{board}/g, 'Ec65656')
+              .replace(/{pnid}/g, 'pn167')
+              .replace(/{kilometers}/g, '2000');
+      
+      emailText.addEventListener('input', function() {
+          const template = emailText.value;
+          const updatedPreview = template
+              .replace(/{private}/g, 'EL 01')
+              .replace(/{board}/g, 'Ec65656')
+              .replace(/{pnid}/g, 'pn167')
+              .replace(/{kilometers}/g, '2000');
+          
+          emailPreviewText.textContent = updatedPreview;
+      });
+
+
+      async function updateEmailTemplate(){
+
+        let response = await fetch('/admin/api/settings/emailTemplate',{
+          method:'PUT',
+          headers:{
+            'Content-Type': 'application/json; charset=utf-8'
+          },
+          body:JSON.stringify({
+            subject:emailSubject.value,
+            text: emailText.value
+          })
+        })
+
+        if(response.status == 200){
+          Toast.fire({
+            icon: 'success',
+            title: 'E-postmalen ble oppdatert'
+          })
+        }
+      }
+
+      async function updateSmsTemplate(){
+        let text = document.querySelector('.sms-template-preview')
+
+        let response = await fetch('/admin/api/settings/smsTemplate',{
+          method:'PUT',
+          headers:{
+            'Content-Type': 'application/json; charset=utf-8'
+          },
+          body:JSON.stringify({
+            text: smsText.value
+          })
+        })
+
+        if(response.status == 200){
+          Toast.fire({
+            icon: 'success',
+            title: 'SMS-malen ble oppdatert'
+          })
+        }
+      }
+  </script>
+</body>
+</html>

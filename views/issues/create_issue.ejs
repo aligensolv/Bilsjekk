@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>create issue</title>
+    <!-- Add Bootstrap CSS link -->
+    <%- include('../components/headers.ejs') %>
+      <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+        <%- include('../components/sidebar') %> 
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item"><a href="/reports/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item active">Create Issue</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Create Issue
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="container-fluid">
+                                    <div id="infoBox" class="alert" role="alert" style="display: none;"></div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-9">
+                                            <form class="container-fluid" id="createMachineForm">
+                                                <div class="form-group">
+                                                    <select id="machines" class="form-control select2 select2-blue" data-dropdown-css-class="select2-danger">
+                                                        
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <select id="categories" class="form-control select2 select2-blue" data-dropdown-css-class="select2-danger">
+                                                        
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <select id="problems" class="form-control select2 select2-blue" data-dropdown-css-class="select2-danger">
+                                                        
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <textarea name="" id="notes" cols="30" rows="5" class="text-area form-control"></textarea>
+                                                </div>
+                                        
+                                        
+                                                <div class="d-flex justify-content-center align-items-center btn-group">
+                                                    <button type="button" id="createButton" class="btn btn-info me-3" onclick="createIssue()">Lage</button>
+                                                    <a href="/machines" class="btn btn-secondary">Avbryt</a>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>                    
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+    <%- include('../components/scripts.ejs') %>
+    
+    <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+
+
+
+    <script>
+        $('#machines').select2()
+        $('#problems').select2()
+        $('#categories').select2()
+
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        $('#createMachineForm').validate({
+    rules: {
+      name: {
+        required: true,
+      },
+      importanceLevel: {
+        required: true,
+      },
+    },
+    messages: {
+      name: {
+        required: "Skriv inn kategorinavn",
+      },
+      importanceLevel: {
+        required: "Velg viktighetsnivå",
+      },
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+
+  let machinesHolder = document.getElementById('machines')
+  let categoriesHolder = document.getElementById('categories')
+  let problemsHolder = document.getElementById('problems')
+
+  async function initializeMachines(){
+    let machines = await fetch('/api/machines')
+    let json = await machines.json();
+
+    for(let i = 0; i < json.length; i++){
+        let option = document.createElement('option');
+        option.textContent = json[i].zoneLocation
+        option.value = json[i]._id
+        machinesHolder.appendChild(option)
+    }
+  }
+
+  async function initializeCategories(){
+    let categories = await fetch('/api/issues/categories')
+    let json = await categories.json();
+
+    for(let i = 0; i < json.length; i++){
+        let option = document.createElement('option');
+        option.textContent = json[i].name
+        option.value = json[i]._id
+        option.setAttribute('cat', json[i].name)
+        option.setAttribute('importance', json[i].importanceLevel)
+
+        for(let j = 0; j < json[i].problems.length; j++){
+            let optionP = document.createElement('option');
+            optionP.textContent = json[i].problems[j]
+            optionP.value = json[i].problems[j]
+
+            problemsHolder.appendChild(optionP)
+        }
+
+        categoriesHolder.appendChild(option)
+    }
+  }
+
+  async function createIssue(){
+    console.log(document.getElementById('machines').options[document.getElementById('machines').selectedIndex]);
+    let ss = $('#machines'). find(':selected')
+    console.log(ss);
+    let categories = document.getElementById('categories')
+    let selectedCategory = categories.options[categories.selectedIndex]
+
+    let data = JSON.stringify({
+        publisher: 'admin',
+        id: $('#machines').val(),
+        notes: $('#notes').val(),
+        category: selectedCategory.getAttribute('cat'),
+        importanceLevel: +selectedCategory.getAttribute('importance'),
+        problem: $('#problems').val(),
+    })
+
+    console.log(data);
+
+    let response = await fetch('/api/issues',{
+        headers:{
+            'Content-Type': 'application/json; charset=utf-8'
+        },
+        method: 'POST',
+        body: data
+    })
+
+    if(response.status === 200) {
+        Toast.fire({
+            icon: 'success',
+            title: 'Issue was successfully created'
+        })
+    }else{
+        Toast.fire({
+            icon: 'danger',
+            title: 'Error creating issue'
+        })
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', async (event) => {
+    await initializeMachines()
+    await initializeCategories()
+  })
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Ledere</title>
+        <%- include('../components/headers') %>
+          <!-- DataTables -->
+        <link rel="stylesheet" href="/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+        <link rel="stylesheet" href="/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+        <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+    </head>
+    <body>
+        <div class="wrapper">
+            <%- include('../components/navbar') %>
+            <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %> 
+            <div class="content-wrapper">
+                <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item active">Ledere</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="d-flex justify-content-end align-items-center mb-2 container-fluid">
+                <a href="/managers/create" class="btn btn-info btn-sm mr-1">
+                    <i class="fa fa-plus"></i>
+                    <span>Legge til</span>
+                </a>
+            </div>
+
+                <div class="content">
+                    <div class="card">
+                        <div class="card-header">
+                          <h3 class="card-title d-flex justify-content-between align-items-center">
+                            Lederdata
+                          </h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body">
+                          <table id="example1" class="table table-bordered table-striped text-center">
+                            <thead>
+                            <tr>
+                                <th>Brukernavn</th>
+                                <th>Navn</th>
+                                <th>Rolle</th>
+                                <th>Tillatelser</th>
+                                <th>Handlinger</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <% if (managers.length > 0) { %>
+                                    <% managers.forEach(manager => { %>
+                                        <tr>
+                                            <td><%= manager.username ?? '-' %></td>
+                                            <td><%= manager.name ?? '-' %></td>
+                                            <td><%= manager.role ?? '-' %></td>
+                                            <td class="d-flex flex-wrap" style="width: 100%;">
+                                                <% if(manager.role == 'admin'){ %>
+                                                    Alle
+                                                <% } else{%>
+                                                    <% manager.permissions.forEach(p =>{ %>
+                                                        <p style="background-color: cadetblue;"><span><%= p.method %></span> <%= p.route %></p>
+                                                        &nbsp;
+                                                    <% }) %>
+                                                <% }%>
+                                            </td>
+                                            <td>
+                                                <a href="/managers/<%= manager._id %>/update" class="btn btn-sm btn-info mr-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#deleteModal<%= manager._id %>">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <!-- Delete Modal -->
+                                        <div class="modal fade" id="deleteModal<%= manager._id %>" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="deleteModalLabel">Slett bekreftelse</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Er du sikker på at du vil slette <%= manager.username %>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Avbrytt</button>
+                                                        <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="deleteManager('<%= manager._id %>')">Slett</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="6" class="text-center">Ingen biler.</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                          </table>
+                        </div>
+                        <!-- /.card-body -->
+                      </div>
+                </div>
+            </div>
+
+            <%- include('../components/footer') %>
+        </div>
+
+        <%- include('../components/scripts') %>
+        <!-- DataTables  & Plugins -->
+        <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
+        <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+        <script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+        <script src="/plugins/jszip/jszip.min.js"></script>
+        <script src="/plugins/pdfmake/pdfmake.min.js"></script>
+        <script src="/plugins/pdfmake/vfs_fonts.js"></script>
+        <script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+        <script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+        <script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+
+        <script>
+            $(function () {
+        
+              $("#example1").DataTable({
+                "responsive": true, "lengthChange": true, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
+                "language": {
+                "emptyTable": "Ingen data tilgjengelig",
+                "infoEmpty": "Ingen data tilgjengelig Info",
+                "zeroRecords": "Det er ingen samsvarende data"
+                } ,
+              }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+            });
+          </script>
+
+        <script>
+            var Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+
+
+            async function deleteManager(id){
+                try{
+                    let respones = await fetch(`/admin/api/managers/${id}`,{
+                    method: 'DELETE'
+                })
+
+                if(respones.status === 200) {
+                    Toast.fire({
+                      icon: 'success',
+                      title: 'manager ble slettet'
+                    })
+
+                    setTimeout(() =>{
+                        location.reload();
+                    }, 3000);
+                }else if(respones.status === 403){
+                  Toast.fire({
+                    icon: 'error',
+                    title: 'Admin kan ikke slettes, forbudt'
+                  })
+                }
+                }catch(e){
+                    Toast.fire({
+                    icon: 'error',  
+                    title: e.message
+                  })
+                }
+            }
+        </script>
+    </body>
+</html>

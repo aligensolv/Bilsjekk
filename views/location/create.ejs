@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lag rute</title>
+    <!-- Add Bootstrap CSS link -->
+    <%- include('../components/headers') %>
+      <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+        <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item"><a href="/locations">Routes</a></li>
+                    <li class="breadcrumb-item active">Legge til</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Lag rute
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="container-fluid">
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-9">
+                                            <form id="newLocationForm">
+                                                <div class="input-group form-group mb-3">
+                                                    <div class="input-group-prepend">
+                                                      <span class="input-group-text"><i class="fa fa-location-arrow"></i></span>
+                                                    </div>
+                                                    <input type="text" class="form-control" placeholder="plassering" name="location" id="location">
+                                                  </div>
+                                                <div class="d-flex justify-content-around">
+                                                    <div class="form-group">
+                                                        <label>Velg dager</label>
+                                                        <div class="checkbox-group">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input custom-control-input-info" id="c1" name="days[]" type="checkbox" value="lørdag">
+                                                                <label for="c1" class="custom-control-label">Lørdag</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input custom-control-input-info" id="c2" name="days[]" type="checkbox" value="søndag">
+                                                                <label for="c2" class="custom-control-label">Søndag</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input custom-control-input-info" id="c3" name="days[]" type="checkbox" value="mandag">
+                                                                <label for="c3" class="custom-control-label">Mandag</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input custom-control-input-info" id="c4" name="days[]" type="checkbox" value="tirsdag">
+                                                                <label for="c4" class="custom-control-label">Tirsdag</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input custom-control-input-info" id="c5" name="days[]" type="checkbox" value="onsdag">
+                                                                <label for="c5" class="custom-control-label">Onsdag</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input custom-control-input-info" id="c6" name="days[]" type="checkbox" value="torsdag">
+                                                                <label for="c6" class="custom-control-label">Torsdag</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input custom-control-input-info" id="c7" name="days[]" type="checkbox" value="fredag">
+                                                                <label for="c7" class="custom-control-label">Fredag</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Velg vakt</label>
+                                                        <div class="checkbox-group">
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input custom-control-input-info" name="shifts[]" type="checkbox" id="dag" value="dag">
+                                                                <label for="dag" class="custom-control-label">Dag</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input custom-control-input-info" name="shifts[]" type="checkbox" id="natt" value="natt">
+                                                                <label for="natt" class="custom-control-label">Natt</label>
+                                                            </div>
+                                                            <div class="custom-control custom-checkbox">
+                                                                <input class="custom-control-input custom-control-input-info" name="shifts[]" type="checkbox" id="kveld" value="kveld">
+                                                                <label for="kveld" class="custom-control-label">Kveld</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                
+                                                <div class="btn-group d-flex justify-content-center align-items-center">
+                                                    <button type="submit" class="btn btn-info">Legg til plassering</button>
+                                                    <a href="/locations" class="btn btn-secondary">Avbrytt</a>
+                                                </div>
+                                            </form>
+                     
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+    <%- include('../components/scripts') %>
+    
+    <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+
+
+
+    <script>
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        $('#newLocationForm').validate({
+            rules: {
+            location:{
+                required: true
+            },
+            'days[]': {
+                required: true,
+                minlength: 1
+            },
+            'shifts[]': {
+                required: true,
+                minlength: 1
+            },
+        },
+        messages: {
+            'days[]': {
+                required: "Du må sjekke minst 1 dag",
+            },
+            'shifts[]': {
+                required: "Du må sjekke minst 1 skift",
+            },
+            location: {
+                required: "Du må angi plassering"
+            }
+        },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+        
+
+let form = document.getElementById('newLocationForm')
+form.addEventListener('submit',async function createLocation(e) {
+e.preventDefault()
+    if($('#newLocationForm').valid()){
+        const shifts = document.querySelectorAll('input[name="shifts[]"]');
+const days = document.querySelectorAll('input[name="days[]"]');
+
+
+const selectedShifts = [];
+shifts.forEach(function (checkbox) {
+if (checkbox.checked) {
+    selectedShifts.push(checkbox.value);
+}
+});
+
+const selectedDays = [];
+days.forEach(function (checkbox) {
+if (checkbox.checked) {
+    selectedDays.push(checkbox.value);
+}
+});
+
+
+
+const location = document.querySelector('#location');
+fetch('/admin/api/locations', {
+method: 'POST',
+headers: {
+    'Content-Type': 'application/json'
+},
+body: JSON.stringify({
+    location: location.value,
+    shifts: selectedShifts,
+    days: selectedDays
+})
+})
+.then(async response => {
+    if (response.status === 200) {
+        Toast.fire({
+                icon: 'success',
+                title: 'Plasseringen ble opprettet'
+            })
+        setTimeout(() => {
+            window.location.href = '/locations'; // Redirect to the location list page
+        }, 3000);
+    } else {
+        Toast.fire({
+            icon: 'error',
+            title: (await response.json()).toString()
+        })
+    }
+})
+.catch(error => {
+    Toast.fire({
+        icon: 'error',
+        title: error.message
+    })
+});
+    }
+
+})
+    </script>
+</body>
+</html>
+
+

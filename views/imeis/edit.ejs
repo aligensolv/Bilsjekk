@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oppdater IMEI</title>
+    <!-- Add Bootstrap CSS link -->
+    <%- include('../components/headers.ejs') %>
+      <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+        <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item"><a href="/imeis">Imeis</a></li>
+                    <li class="breadcrumb-item"><a href="/imeis"><%= imei.name %></a></li>
+                    <li class="breadcrumb-item active">Oppdater</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Oppdater imei
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="container-fluid">
+                                    <div id="infoBox" class="alert" role="alert" style="display: none;"></div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-9">
+                                            <form class="container-fluid" id="updateImeiForm">
+                                                <h1>Rediger IMEI</h1>
+                                                <div id="edit-zone-form">
+                                                    <div class="form-group">
+                                                        <label for="imeiSerial">IMEI serie</label>
+                                                        <input type="text" id="imeiSerial" name="imeiSerial" class="form-control" value="<%= imei.serial %>" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="imeiName">IMEI-navn</label>
+                                                        <input type="text" id="imeiName" name="imeiName" class="form-control" value="<%= imei.name %>" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="zone" class="form-label">Velg Sone</label>
+                                                        <select id="zone" name="zone" class="form-select custom-select">
+                                                            <!-- Options will be added dynamically using JavaScript -->
+                                                        </select>
+                                                    </div>
+                                                    <div class="d-flex justify-content-center align-items-center mt-3 btn-group">
+                                                      <button type="button" id="updateButton" class="btn btn-info btn-sm me-3 ps-3 pe-3">Oppdater</button>
+                                                      <a href="/imeis" class="btn btn-secondary btn-sm ps-3 pe-3">Avbryt</a>
+                                          
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>                    
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+    <%- include('../components/scripts.ejs') %>
+    
+    <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+
+
+
+    <script>
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        $('#updateImeiForm').validate({
+    rules: {
+      imeiSerial: {
+        required: true,
+      },
+
+      imeiName:{
+        required: true
+      }
+    },
+    messages: {
+      imeiSerial: {
+        required: "skriv inn imei serienummer",
+      },
+      imeiName: {
+        required: "skriv inn imei enhetsnavn",
+      },
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+
+
+  // JavaScript for handling the update without form submission
+  const updateButton = document.getElementById('updateButton');
+        const imeiId = '<%= imei._id %>';
+
+        updateButton.addEventListener('click', () => {
+            if($('#updateImeiForm').valid()){
+                const imeiName = document.getElementById('imeiName').value;
+            const imeiSerial = document.getElementById('imeiSerial').value;
+            const selectedZoneId = document.getElementById('zone').value;
+
+            // Create a JSON object with the updated data
+            const updatedImei = {
+                serial: imeiSerial,
+                name: imeiName,
+                zone: selectedZoneId
+            };
+
+            // Send a fetch request to update the zone
+            fetch(`/admin/api/imeis/${imeiId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedImei)
+            })
+            .then(async response => {
+                if (response.status === 200) {
+                  Toast.fire({
+                    icon: 'success',
+                    title: 'Imei ble oppdatert'
+                  })
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: await response.json()
+                    })
+                }
+            })
+            .catch(error => {
+                Toast.fire({
+                    icon: 'error',
+                    title: error.message
+                })
+            });
+            }
+        });
+
+        // Function to populate the zone dropdown with data from /admin/api/zones
+        async function populateZoneDropdown() {
+            try {
+                const zoneDropdown = document.getElementById('zone');
+
+                // Fetch zones data from /admin/api/zones
+                const response = await fetch('/admin/api/zones');
+                const zones = await response.json();
+
+                // Populate the dropdown options
+                zones.forEach((zone) => {
+                    const option = document.createElement('option');
+                    option.value = zone._id;
+                    option.text = zone.name;
+                    zoneDropdown.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching and populating zones:', error);
+            }
+        }
+
+        // Invoke the code when the DOM content is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Populate the zone dropdown when the page loads
+            populateZoneDropdown();
+        });
+
+    </script>
+
+</body>
+</html>
+
+

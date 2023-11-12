@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opprett felt</title>
+    <!-- Add Bootstrap CSS link -->
+    <%- include('../components/headers.ejs') %>
+      <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="/plugins/toastr/toastr.min.css">
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+        <%- include('../components/navbar') %>
+        <% if(isAdmin){ %>
+            <%- include('../components/sidebar') %> 
+        <% } else{%>
+            <%- include('../components/manager_sidebar', { permissions }) %> 
+        <% } %>  
+
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb float-sm-left">
+                    <li class="breadcrumb-item"><a href="/">Hjem</a></li>
+                    <li class="breadcrumb-item"><a href="/fields">Enger</a></li>
+                    <li class="breadcrumb-item active">Legge til</li>
+                    </ol>
+                </div><!-- /.col -->
+                </div><!-- /.row -->
+
+            </div><!-- /.container-fluid -->
+            </div>
+
+            <div class="content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-header">
+                              <h3 class="card-title d-flex justify-content-between align-items-center">
+                                Opprett felt
+                              </h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body">
+                                <div class="container-fluid">
+                                    <div id="infoBox" class="alert" role="alert" style="display: none;"></div>
+                                    <div class="row justify-content-center">
+                                        <div class="col-md-9">
+                                            <div class="container">
+                                                <form id="createForm">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" id="title" name="title" required placeholder="Tittel">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="answerDataType">Svardatatype</label>
+                                                        <select class="form-control custom-select" id="answerDataType" name="answerDataType" required onchange="toggleAdditionalFields()">
+                                                            <option value="text">Tekst</option>
+                                                            <option value="number">Nummer</option>
+                                                            <option value="yes_no">Ja-Nei</option>
+                                                            <option value="file">Fil</option>
+                                                            <option value="date">Dato</option>
+                                                            <option value="image">Bilde</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="group">Gruppe</label>
+                                                        <select class="form-control custom-select" id="group" name="group" required>
+                                                            <% groups.forEach(group => { %>
+                                                                <option value="<%= group._id %>"><%= group.name %></option>
+                                                            <% }); %>
+                                                        </select>
+                                                    </div>
+                                            
+                                                    <div class="form-group">
+                                                        <label for="form">Skjema</label>
+                                                        <select class="form-control custom-select" id="form" name="form" required>
+                                                            <option value="First">Første</option>
+                                                            <option value="Second">Andre</option>
+                                                        </select>
+                                                    </div>
+                                            
+                                                    <div class="form-group" id="requiredDescriptionField">
+                                                        <input type="text" class="form-control" id="requiredDescription" name="requiredDescription" placeholder="Beskrivelse" required>
+                                                    </div>
+                                            
+                                                    <!-- Display these fields only for "Ja-Nei" question type -->
+                                                    <div class="form-group form-check" style="display: none;" id="requiredDescriptionGroup">
+                                                        <input type="checkbox" class="form-check-input" id="hasRequiredDescription" onchange="toggleRequiredDescription()" name="hasRequiredDescription">
+                                                        <label class="form-check-label" for="hasRequiredDescription">Har nødvendig beskrivelse?</label>
+                                                    </div>
+                                                    <div class="form-group" style="display: none;" id="positiveGroup">
+                                                        <label for="positive">Velg når du vil få beskrivelse</label>
+                                                        <select name="positive" class="form-control custom-select" id="positive" disabled>
+                                                            <option value="yes">Ja</option>
+                                                            <option value="no">Nei</option>
+                                                        </select>
+                                                    </div>
+                                        
+                                                    <div class="d-flex justify-content-center align-items-center btn-group">
+                                                        <button type="submit" class="btn btn-info">Legge til</button>
+                                                        <a href="/fields" class="btn btn-secondary">Avbrytt</a>
+                                                    </div>
+                                                </form>
+                                            
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>                    
+                            </div>
+                            <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+        <%- include('../components/footer') %>
+    </div>
+
+    <%- include('../components/scripts.ejs') %>
+    
+    <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+
+
+
+    <script>
+        var Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+        $('#createCarForm').validate({
+    rules: {
+      boardNumber: {
+        required: true,
+      },
+      privateNumber: {
+        required: true,
+      },
+      kilometers: {
+        required: true
+      },
+    },
+    messages: {
+      boardNumber: {
+        required: "skriv inn et tavlenummer",
+      },
+      privateNumber: {
+        required: "skriv inn et privat nummer",
+      },
+      kilometers: {
+        required: "skriv inn kilometer"
+      },
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+        
+     // Function to enable/disable the required description based on checkbox state
+     function toggleRequiredDescription() {
+            const positive = document.getElementById("positive");
+            const checkbox = document.getElementById("hasRequiredDescription");
+            positive.disabled = !checkbox.checked;
+        }
+
+
+        // Function to show/hide additional fields for "Ja-Nei" question type
+        function toggleAdditionalFields() {
+            const answerDataType = document.getElementById("answerDataType");
+            const requiredDescriptionGroup = document.getElementById("requiredDescriptionGroup");
+            const positiveGroup = document.getElementById("positiveGroup");
+
+            if (answerDataType.value === "yes_no") {
+                requiredDescriptionGroup.style.display = "block";
+                positiveGroup.style.display = "block";
+            } else {
+                requiredDescriptionGroup.style.display = "none";
+                positiveGroup.style.display = "none";
+            }
+        }
+
+
+        // Function to handle form submission using Fetch API
+        document.getElementById("createForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            let title = document.querySelector('#title')
+            let answerDataType = document.querySelector('#answerDataType')
+            let group = document.querySelector('#group')
+            let form = document.querySelector('#form')
+            let hasRequiredDescription = document.querySelector('#hasRequiredDescription')
+            let requiredDescription = document.querySelector('#requiredDescription')
+            let whenToGetDescription = document.querySelector('#positive')
+
+            try {
+                let response = await fetch("/admin/api/formFields", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        title: title.value,
+                        group: group.value,
+                        form: form.value,
+                        hasRequiredDescription: hasRequiredDescription.checked,
+                        requiredDescription: requiredDescription.value,
+                        answerDataType: answerDataType.value,
+                        whenToGetDescription: whenToGetDescription.value == 'yes'
+                    }),
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8'
+                    }
+                });
+
+                if (response.status === 200) {
+                    // Show success alert and navigate back after 3 seconds
+                    Toast.fire({
+                        icon: 'success',
+                        title: "Felt ble opprettet"
+                    })
+                    setTimeout(() => {
+                        location.href = '/fields';
+                    }, 3000);
+                } else {
+                    Toast.fire({
+                        icon: 'error',
+                        title: await response.json()
+                    })
+                }
+            } catch (error) {
+                Toast.fire({
+                        icon: 'error',
+                        title: error.message
+                    })
+            }
+        });
+    </script>
+
+</body>
+</html>
+
