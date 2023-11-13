@@ -116,10 +116,10 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="ti-holder">-</h3>
                                         <a href="/issues" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>
-                                    <span class="mb-0">Alle klage</span>
+                                    <span class="mb-0">Totalt klager</span>
                                 </div>
                             </div>
                         </div>
@@ -139,7 +139,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="ci-holder">-</h3>
                                         <a href="/issues" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>                                    <span class="mb-0  text-white">Løst klage</span>
                                 </div>
@@ -161,7 +161,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="wi-holder">-</h3>
                                         <a href="/issues" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>                                    <span class="mb-0">Klage på vent</span>
                                 </div>
@@ -173,7 +173,7 @@
                             <div class="card-body">
                                 <div class="top-block-one d-flex align-items-center justify-content-between">
                                     <div class="icon iq-icon-box-2 mr-2 rtl-ml-2 rtl-mr-0 rounded">
-                                        <img src="/images/waiting.png" alt="" srcset="" width="100%" height="100%">
+                                        <img src="/images/online.png" alt="" srcset="" width="100%" height="100%">
                                     </div>
                                     <span class="text-primary"> <i class="ri-arrow-up-fill mr-1 fa-2x"></i></span>
 
@@ -183,9 +183,9 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="active-holder">-</h3>
                                         <a href="/machines" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
-                                    </div>                                    <span class="mb-0">Active</span>
+                                    </div>                                    <span class="mb-0">Aktiv</span>
                                 </div>
                             </div>
                         </div>
@@ -205,7 +205,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="ici-holder">-</h3>
                                         <a href="/issues" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>                                    <span class="mb-0">Uløst klage</span>
                                 </div>
@@ -227,9 +227,9 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="ibd-holder">-</h3>
                                         <a href="/issues" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
-                                    </div>                                    <span class="mb-0">Klage ab betjent</span>
+                                    </div>                                    <span class="mb-0">Klage av betjent</span>
                                 </div>
                             </div>
                         </div>
@@ -250,7 +250,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="isd-holder">-</h3>
                                         <a href="/issues" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>                                    <span class="mb-0">Løst klage av betjent</span>
                                 </div>
@@ -263,7 +263,7 @@
                             <div class="card-body">
                                 <div class="top-block-one d-flex align-items-center justify-content-between">
                                     <div class="icon iq-icon-box-2 mr-2 rtl-ml-2 rtl-mr-0 rounded">
-                                        <img src="/images/by_driver.png" alt="" srcset="" width="100%" height="100%">
+                                        <img src="/images/active.png" alt="" srcset="" width="100%" height="100%">
                                     </div>
                                     <span class="text-white"><i class="ri-arrow-down-line mr-1 fa-2x"></i></span>
 
@@ -274,9 +274,9 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="offline-holder">-</h3>
                                         <a href="/machines" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
-                                    </div>                                    <span class="mb-0">Offline</span>
+                                    </div>                                    <span class="mb-0">Frakoblet</span>
                                 </div>
                             </div>
                         </div>
@@ -332,7 +332,7 @@
                 <div class="card card-block card-stretch card-height">
                     <div class="card-header border-none">
                         <div class="header-title">
-                            <h4 class="card-title">Antall og gjentatt klage</h4>
+                            <h4 class="card-title">Antall og gjentatt klage månedlig</h4>
                         </div>
                     </div>
                     <div class="card-body">
@@ -345,7 +345,7 @@
                 <div class="card card-block card-stretch card-height rtl-card">
                 <div class="card-header border-none">
                     <div class="header-title">
-                        <h4 class="card-title">Analytics</h4>
+                        <h4 class="card-title">Antall og gjentatt klage daglig</h4>
                     </div>
                 </div>
                     <div class="card-body" id="chartdiv">
@@ -733,15 +733,15 @@
         colorByPoint: true,
         data: [
           {
-            name: 'Working',
+            name: 'Virker',
             y: <%- activeMachines %>,
           },
           {
-            name: 'Waiting',
+            name: 'På vent',
             y: <%- waitingMachines %>
           },
           {
-            name: 'Out of service',
+            name: 'Ute av drift',
             y: <%- inActiveMachines %>
           }
         ]
@@ -967,10 +967,10 @@ let liveTimes = document.querySelectorAll('.live-time')
         let dualData = <%- issuesGroupedIntoMonths %>;
         var options = {
           series: [{
-          name: 'Total Issues',
+          name: 'Totalt klage',
           data: Object.values(dualData).map(v => v.totalIssues)
         }, {
-          name: 'Total Repeated',
+          name: 'Totalt gjentatt',
           data: Object.values(dualData).map(v => v.totalRepeated)
         }],
           chart: {
