@@ -523,7 +523,8 @@ router.get('/reports/general/:id', async (req, res) => {
       let hoursPart = parts[0]
       let minutesPart = parts[1]
 
-      totalActive = hoursPart + 'H' + ' ' + ((+((+minutesPart).toFixed(2)) / 100) * 60).toFixed(2).split('.')[0] + 'M'
+      // totalActive = hoursPart + 'H' + ' ' + ((+minutesPart / 100) * 60).toFixed(2).split('.')[0] + 'M'
+      totalActive = minutesPart
     }
 
     if(totalOffline < 1){
