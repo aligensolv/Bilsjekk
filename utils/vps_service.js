@@ -40,7 +40,7 @@ function restartVPS(){
 
 function updateNordic(){
    // Restart your VPS by executing a command
-   conn.exec('cd ~/workspace/Bilsjekkserverp && git pull', (err, stream) => {
+   conn.exec('cd ~/workspace/Bilsjekk && git pull', (err, stream) => {
     if (err) {
         console.log(err);
         throw err
@@ -64,7 +64,7 @@ function prepareBackup(){
   // Restart your VPS by executing a command
   conn.exec(`
   mkdir -p ~/backup \
-  && cp -R ~/workspace/Bilsjekkserverp/public ~/backup \
+  && cp -R ~/workspace/Bilsjekk/public ~/backup \
   && cd ~/backup \
   && mkdir ${localDateString} \
   && cd ${localDateString} \
