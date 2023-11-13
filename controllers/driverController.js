@@ -9,7 +9,6 @@ const Car = require('../models/Car')
 const Accident = require('../models/Accident')
 const path = require('path')
 const SMS = require('../models/SMS')
-const moment = require('moment')
 
 
 const { sendAlertMail } = require('../utils/smtp_service')
