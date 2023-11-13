@@ -529,7 +529,11 @@ router.get('/reports/general/:id', async (req, res) => {
     if(totalOffline < 1){
       totalOffline = (totalOffline * 60).toFixed(2).split('.')[0] + 'M'
     }else{
-      totalOffline = totalOffline.toFixed(0) + 'H'
+      let parts = totalOffline.toString().split('.')
+      let hoursPart = parts[0]
+      let minutesPart = parts[1].slice(0,2)
+
+      totalOffline = hoursPart + 'H' + ' ' + ((+minutesPart / 100) * 60).toFixed(2).split('.')[0] + 'M'
     }
     return res.status(200).json({
       totalIssues: issues.length,
