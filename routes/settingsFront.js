@@ -22,11 +22,6 @@ router.get('/settings',async (req,res) =>{
    })
 
 
-   let credentialsData = fs.readFileSync(path.join(__dirname,'../data/credentials.json'),{ 
-    encoding: 'utf8',
-    flag: 'r'
-   })
-
    let applicationData = fs.readFileSync(path.join(__dirname,'../data/application.json'),{ 
     encoding: 'utf8',
     flag: 'r'
@@ -34,7 +29,6 @@ router.get('/settings',async (req,res) =>{
 
    let emailJson = JSON.parse(emailData)
    let smsJson = JSON.parse(smsData)
-   let credentialsJson = JSON.parse(credentialsData)
    let applicationJson = JSON.parse(applicationData)
 
 
@@ -43,9 +37,6 @@ router.get('/settings',async (req,res) =>{
     email_subject: emailJson.subject,
 
     sms_template: smsJson.text,
-
-    username: credentialsJson.username,
-    password: credentialsJson.password,
 
     kilometer: applicationJson.kilometer,
     car: applicationJson.car,
