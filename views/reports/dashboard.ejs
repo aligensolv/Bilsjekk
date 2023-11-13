@@ -116,7 +116,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="ti-holder">-</h3>
                                         <a href="/issues" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>
                                     <span class="mb-0">Alle klage</span>
@@ -139,7 +139,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="ci-holder">-</h3>
                                         <a href="/issues" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>                                    <span class="mb-0  text-white">Løst klage</span>
                                 </div>
@@ -161,7 +161,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="wi-holder">-</h3>
                                         <a href="/issues" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>                                    <span class="mb-0">Klage på vent</span>
                                 </div>
@@ -183,7 +183,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="active-holder">-</h3>
                                         <a href="/machines" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>                                    <span class="mb-0">Active</span>
                                 </div>
@@ -205,7 +205,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="ici-holder">-</h3>
                                         <a href="/issues" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>                                    <span class="mb-0">Uløst klage</span>
                                 </div>
@@ -250,7 +250,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="isd-holder">-</h3>
                                         <a href="/issues" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>                                    <span class="mb-0">Løst klage av betjent</span>
                                 </div>
@@ -274,7 +274,7 @@
                                     <div class="d-flex justify-content-between align-items-center">
                                         <h3 id="offline-holder">-</h3>
                                         <a href="/machines" class="btn btn-sm btn-info">
-                                            Check
+                                            Se
                                         </a>
                                     </div>                                    <span class="mb-0">Offline</span>
                                 </div>
@@ -332,7 +332,7 @@
                 <div class="card card-block card-stretch card-height">
                     <div class="card-header border-none">
                         <div class="header-title">
-                            <h4 class="card-title">Antall og gjentatt klage</h4>
+                            <h4 class="card-title">Antall og gjentatt klage månedlig</h4>
                         </div>
                     </div>
                     <div class="card-body">
@@ -345,7 +345,7 @@
                 <div class="card card-block card-stretch card-height rtl-card">
                 <div class="card-header border-none">
                     <div class="header-title">
-                        <h4 class="card-title">Analytics</h4>
+                        <h4 class="card-title">Antall og gjentatt klage daglig</h4>
                     </div>
                 </div>
                     <div class="card-body" id="chartdiv">
@@ -733,15 +733,15 @@
         colorByPoint: true,
         data: [
           {
-            name: 'Working',
+            name: 'Virker',
             y: <%- activeMachines %>,
           },
           {
-            name: 'Waiting',
+            name: 'På vent',
             y: <%- waitingMachines %>
           },
           {
-            name: 'Out of service',
+            name: 'Ute av drift',
             y: <%- inActiveMachines %>
           }
         ]
@@ -967,10 +967,10 @@ let liveTimes = document.querySelectorAll('.live-time')
         let dualData = <%- issuesGroupedIntoMonths %>;
         var options = {
           series: [{
-          name: 'Total Issues',
+          name: 'Totalt klage',
           data: Object.values(dualData).map(v => v.totalIssues)
         }, {
-          name: 'Total Repeated',
+          name: 'Totalt gjentatt',
           data: Object.values(dualData).map(v => v.totalRepeated)
         }],
           chart: {
