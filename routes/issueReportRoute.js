@@ -517,15 +517,15 @@ router.get('/reports/general/:id', async (req, res) => {
     let totalOffline = machines.reduce((sum,machine) => sum + machine.totalOfflineTime,0)
 
     if(totalActive < 1){
-      totalActive = totalActive + 'M'
+      totalActive = (totalActive * 60).toFixed(2).split('.')[0] + 'M'
     }else{
-      totalActive = totalActive + 'H'
+      totalActive = totalActive.toFixed(0) + 'H'
     }
 
     if(totalOffline < 1){
-      totalOffline = totalOffline + 'M'
+      totalOffline = (totalOffline * 60).toFixed(2).split('.')[0] + 'M'
     }else{
-      totalOffline = totalOffline + 'H'
+      totalOffline = totalOffline.toFixed(0) + 'H'
     }
     return res.status(200).json({
       totalIssues: issues.length,
