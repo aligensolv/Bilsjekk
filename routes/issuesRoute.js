@@ -254,7 +254,8 @@ router.post('/issues', async (req, res) => {
                 category: category,
                 problem: problem,
                 importanceLevel: importanceLevel,
-                publisher: publisher
+                publisher: publisher,
+                publisher_identifier: publisher == 'driver' ? pnid : publisher == 'admin' ? 'Drift' : boardNumber
             })
 
             if(publisher == 'driver'){

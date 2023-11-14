@@ -21,6 +21,11 @@ const IssueSchema = new mongoose.Schema({
         default: 'unknown'
     },
 
+    publisher_identifier:{
+        type: String,
+        required: true
+    },
+
     fixedBy:{
         type: String,
         default: null
