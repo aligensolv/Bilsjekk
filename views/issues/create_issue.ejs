@@ -152,6 +152,10 @@
     let machines = await fetch('/api/machines')
     let json = await machines.json();
 
+    json = json.filter((j) => {
+      return j.status == 'active'
+    })
+
     for(let i = 0; i < json.length; i++){
         let option = document.createElement('option');
         option.textContent = json[i].zoneLocation
