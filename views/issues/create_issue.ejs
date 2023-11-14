@@ -153,7 +153,7 @@
     let json = await machines.json();
 
     json = json.filter((j) => {
-      return j.status == 'active'
+      return j.status == 'inactive'
     })
 
     for(let i = 0; i < json.length; i++){
