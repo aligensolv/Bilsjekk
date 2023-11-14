@@ -273,7 +273,7 @@ router.post('/issues', async (req, res) => {
                     type: 'issue',
                     id:id,
                 },
-                topic: 'nordic', // Replace with the topic you want to use
+                topic: 'nordic', 
                 android: {
                     priority: "high"
                 },
@@ -529,7 +529,7 @@ router.post('/issues/:id/technician/reports', async (req, res) => {
                 body: `P-Automat i adressen ${currentIssue.zoneLocation} fikset av ${currentTech.name}`,
                 type: 'issue_closed',
             },
-            topic: 'nordic', // Replace with the topic you want to use
+            topic: 'nordic', 
             android: {
                 priority: "high"
             },
@@ -697,7 +697,7 @@ router.post('/issues/:id/report', upload.single('report') ,async (req, res) => {
                 body: ` P-Automat i adressen ${currentIssue.zoneLocation} fikset av ${currentUser.name}`,
                 type: 'issue_closed',
             },
-            topic: 'nordic', // Replace with the topic you want to use
+            topic: 'nordic', 
             android: {
                 priority: "high"
             },
