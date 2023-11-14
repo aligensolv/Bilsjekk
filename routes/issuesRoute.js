@@ -273,6 +273,9 @@ router.post('/issues', async (req, res) => {
                     id:id,
                 },
                 topic: 'nordic', // Replace with the topic you want to use
+                android: {
+                    priority: "high"
+                },
               };
               
               let response = await admin
@@ -526,6 +529,9 @@ router.post('/issues/:id/technician/reports', async (req, res) => {
                 type: 'issue_closed',
             },
             topic: 'nordic', // Replace with the topic you want to use
+            android: {
+                priority: "high"
+            },
           };
           
           let response = await admin
@@ -691,6 +697,9 @@ router.post('/issues/:id/report', upload.single('report') ,async (req, res) => {
                 type: 'issue_closed',
             },
             topic: 'nordic', // Replace with the topic you want to use
+            android: {
+                priority: "high"
+            },
           };
           
           let response = await admin

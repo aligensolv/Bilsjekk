@@ -164,6 +164,9 @@ router.post('/machines/:id/activate', async (req, res) => {
                 id:req.params.id,
             },
             topic: 'nordic', // Replace with the topic you want to use
+            android: {
+                priority: "high"
+            },
           };
           
           let response = await admin
