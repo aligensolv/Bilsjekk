@@ -378,7 +378,7 @@
                                 <thead>
                                     <tr>
                                         <th>Dato</th>
-                                        <th>pub</th>
+                                        <th>ID</th>
                                         <th>Tasknr</th>
                                         <th>Rute</th>
                                         <th>Kategori</th>
@@ -1150,6 +1150,7 @@ if (jQuery("#layout-3-chart-04").length) {
   map = new google.maps.Map(document.getElementById("cmap"),
                             myOptions);
 
+
   bounds = new google.maps.LatLngBounds();
 
   var donut = new google.maps.Polygon({
@@ -1168,7 +1169,6 @@ if (jQuery("#layout-3-chart-04").length) {
 
  map.fitBounds(bounds);
 
-    
 
     // const {KmlLayer} = await google.maps.importLibrary("maps")
     // KmlLayer.setUrl('http://localhost:9090/kmz/gadm41_NOR_2.kmz')
@@ -1234,6 +1234,16 @@ const markerIcons = {
 let markers = [];
 let infowindows = []
 
+google.maps.event.addListener(donut,"click", function(e){
+    infowindows.map(iw => {
+        iw.close()
+    })
+
+    geoXml.docs[0].placemarks.map(pm => {
+        pm.polygon.infoWindow.close()
+    })
+  })
+
 for (let i = 0; i < machines.length; i++) {
   const status = machines[i].status; // Replace with the actual property that represents the status
   const marker = new google.maps.Marker({
@@ -1249,10 +1259,8 @@ for (let i = 0; i < machines.length; i++) {
 
   // Create content for the tooltip
   const tooltipContent = `
-    <div>
+    <div class='p-1'>
       <h3>${machines[i].zoneLocation}</h3>
-      <p>Latitude: ${machines[i].latitude}</p>
-      <p>Longitude: ${machines[i].longitude}</p>
       <p>Status: ${status}</p>
     </div>
   `;
@@ -1354,7 +1362,7 @@ series.dataFields.valueY = "value1";
 series.dataFields.dateX = "date";
 series.strokeWidth = 2;
 series.minBulletDistance = 10;
-series.tooltipText = "[bold]Issues:[/] {value1}\n[bold]Repeated:[/] {value2}";
+series.tooltipText = "[bold]Problemer:[/] {value1}\n[bold]Gjentatt:[/] {value2}";
 series.tooltip.pointerOrientation = "vertical";
 series.fillOpacity = 0.1; // Fill the area under the line
 series.stroke = am4core.color("lightblue"); // Set line color
