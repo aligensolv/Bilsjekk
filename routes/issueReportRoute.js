@@ -532,7 +532,7 @@ router.get('/reports/general/:id', async (req, res) => {
         let daysPart = parts[0]
         let hoursPart = parts[1].slice(0,2)
 
-        totalActive = daysPart + 'H' + ' ' + ((+hoursPart / 100) * 60).toFixed(2).split('.')[0] + 'H'
+        totalActive = daysPart + 'D' + ' ' + ((+hoursPart / 100) * 60).toFixed(2).split('.')[0] + 'H'
       }
     }
 
@@ -551,7 +551,7 @@ if (totalOffline < 24) {
   let daysPart = parts[0]
   let hoursPart = parts[1].slice(0,2)
 
-  totalOffline = daysPart + 'H' + ' ' + ((+hoursPart / 100) * 60).toFixed(2).split('.')[0] + 'H'
+  totalOffline = daysPart + 'D' + ' ' + ((+hoursPart / 100) * 60).toFixed(2).split('.')[0] + 'H'
 }
     }
     return res.status(200).json({
