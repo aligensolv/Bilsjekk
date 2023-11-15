@@ -519,21 +519,40 @@ router.get('/reports/general/:id', async (req, res) => {
     if(totalActive < 1){
       totalActive = (totalActive * 60).toFixed(2).split('.')[0] + 'M'
     }else{
-      let parts = totalActive.toString().split('.')
-      let hoursPart = parts[0]
-      let minutesPart = parts[1].slice(0,2)
+      if(totalActive < 24){
+        let parts = totalActive.toString().split('.')
+        let hoursPart = parts[0]
+        let minutesPart = parts[1].slice(0,2)
 
-      totalActive = hoursPart + 'H' + ' ' + ((+minutesPart / 100) * 60).toFixed(2).split('.')[0] + 'M'
+        totalActive = hoursPart + 'H' + ' ' + ((+minutesPart / 100) * 60).toFixed(2).split('.')[0] + 'M'
+
+      }else{
+        let parts = (Math.floor(totalActive) / 24).toFixed(2).split('.')
+
+        let daysPart = parts[0]
+        let hoursPart = parts[1].slice(0,2)
+
+        totalActive = daysPart + 'H' + ' ' + ((+hoursPart / 100) * 60).toFixed(2).split('.')[0] + 'H'
+      }
     }
 
     if(totalOffline < 1){
       totalOffline = (totalOffline * 60).toFixed(2).split('.')[0] + 'M'
     }else{
-      let parts = totalOffline.toString().split('.')
-      let hoursPart = parts[0]
-      let minutesPart = parts[1].slice(0,2)
+if (totalOffline < 24) {
+        let parts = totalOffline.toString().split('.')
+        let hoursPart = parts[0]
+        let minutesPart = parts[1].slice(0,2)
+  
+        totalOffline = hoursPart + 'H' + ' ' + ((+minutesPart / 100) * 60).toFixed(2).split('.')[0] + 'M'
+}else{
+  let parts = (Math.floor(totalOffline) / 24).toFixed(2).split('.')
 
-      totalOffline = hoursPart + 'H' + ' ' + ((+minutesPart / 100) * 60).toFixed(2).split('.')[0] + 'M'
+  let daysPart = parts[0]
+  let hoursPart = parts[1].slice(0,2)
+
+  totalOffline = daysPart + 'H' + ' ' + ((+hoursPart / 100) * 60).toFixed(2).split('.')[0] + 'H'
+}
     }
     return res.status(200).json({
       totalIssues: issues.length,
