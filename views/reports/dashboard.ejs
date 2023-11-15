@@ -1257,6 +1257,12 @@ for (let i = 0; i < machines.length; i++) {
     marker.setAnimation(google.maps.Animation.BOUNCE);
   }
 
+  let statusJumpTable = {
+    active: 'aktiv',
+    inactive: 'inaktiv',
+    waiting: 'venter'
+  }
+
   // Create content for the tooltip
   const tooltipContent = `
     <div class='p-1'>
