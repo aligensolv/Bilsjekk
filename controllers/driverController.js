@@ -199,8 +199,8 @@ const createNewDriver = async (req,res) =>{
             accountId:user.accountId,
             violations:eval(information.trafficViolations),
             removed:Number.isNaN(+information.trafficViolations.split('-')[1]) ? 0 : +information.trafficViolations.split('-')[1],
-            createdAt:localDateString,
-            time:localTimeString
+            createdAt:currentDate,
+            time:currentTime
         })
 
         await violation.save()
@@ -220,8 +220,8 @@ const createNewDriver = async (req,res) =>{
                 boardNumber: existingCar.boardNumber,
                 privateNumber: existingCar.privateNumber,
                 content:filteredWanted[0].value,
-                createdAt: localDateString,
-                time: localTimeString
+                createdAt: currentDate,
+                time: currentTime
             })
 
             await accident.save()
